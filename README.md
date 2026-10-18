@@ -14,8 +14,7 @@ Mode pengembangan (restart otomatis): `npm run dev`
 ## Akun contoh (dari seed)
 | Username | Password     | Peran     |
 |----------|--------------|-----------|
-| admin    | admin12345   | Admin     |
-| seller   | seller12345  | Penjual   |
+| admin    | admin12345   | Admin     |  |
 | budi     | budi12345    | Pelanggan |
 
 ## Fitur

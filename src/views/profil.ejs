@@ -1,0 +1,29 @@
+<%- include('partials/header') %>
+<section class="form-wrap wide">
+  <h1>Profil Saya</h1>
+  <p class="muted">Username: <b><%= user.username %></b> · Peran: <b><%= LABEL[role] %></b></p>
+  <% if (error) { %><p class="err"><%= error %></p><% } %>
+  <form method="post" action="/profil" class="form kartu">
+    <div class="dua">
+      <label>Nama depan<input name="first_name" value="<%= user.first_name %>" required></label>
+      <label>Nama belakang<input name="last_name" value="<%= user.last_name %>"></label>
+    </div>
+    <div class="dua">
+      <label>Email<input type="email" name="email" value="<%= user.email %>"></label>
+      <label>No. WhatsApp<input name="no_hp" value="<%= profil.no_hp || '' %>"></label>
+    </div>
+    <label>Alamat<textarea name="alamat"><%= profil.alamat || '' %></textarea></label>
+    <button class="btn">Simpan Perubahan</button>
+  </form>
+
+  <h2>Ubah Password</h2>
+  <form method="post" action="/profil/password" class="form kartu">
+    <label>Password lama<input type="password" name="lama" required autocomplete="current-password"></label>
+    <div class="dua">
+      <label>Password baru<input type="password" name="baru" minlength="8" required autocomplete="new-password"></label>
+      <label>Ulangi password baru<input type="password" name="baru2" minlength="8" required autocomplete="new-password"></label>
+    </div>
+    <button class="btn ghost">Ubah Password</button>
+  </form>
+</section>
+<%- include('partials/footer') %>

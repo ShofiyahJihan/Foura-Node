@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= locals.title ? title + ' — ' : '' %>Foura Creative</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav-pill">
+
+    <a class="brand" href="/">
+      <img src="/images/logo.png" alt="Logo Foura Creative" class="logo-img">
+      <span class="brand-name">Foura Creative</span>
+    </a>
+
+    <nav class="links">
+      <a href="/" class="<%= path === '/' ? 'active' : '' %>">Beranda</a>
+      <a href="/katalog" class="<%= path.startsWith('/katalog') || path.startsWith('/produk') ? 'active' : '' %>">Katalog Layanan</a>
+      <span class="nonaktif" title="Segera hadir" aria-disabled="true">Portofolio</span>
+      <span class="nonaktif" title="Segera hadir" aria-disabled="true">Tentang Kami</span>
+      <% if (role === 'admin') { %>
+        <a href="/kelola" class="<%= path.startsWith('/kelola') ? 'active' : '' %>">Kelola</a>
+      <% } %>
+    </nav>
+
+    <div class="aksi">
+      <% if (user) { %>
+        <span class="sapa"><a href="/profil"><%= user.first_name || user.username %></a> · <%= LABEL[role] %></span>
+        <form method="post" action="/keluar"><button class="btn ghost">Keluar</button></form>
+      <% } else { %>
+        <a class="btn ghost" href="/masuk">Masuk</a>
+        <a class="btn" href="/daftar">Daftar</a>
+      <% } %>
+    </div>
+
+  </div>
+</header>
+
+<% if (flash) { %><div class="pesan"><p class="<%= flash.type %>"><%= flash.msg %></p></div><% } %>
+
+<main>

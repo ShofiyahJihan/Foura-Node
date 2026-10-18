@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+<section class="form-wrap">
+  <h1>Masuk</h1>
+  <p class="muted">Belum punya akun? <a href="/daftar">Daftar</a></p>
+  <% if (error) { %><p class="err"><%= error %></p><% } %>
+  <form method="post" action="/masuk" class="form kartu">
+    <input type="hidden" name="next" value="<%= next %>">
+    <label>Username<input name="username" value="<%= username %>" required autofocus autocomplete="username"></label>
+    <label>Password<input type="password" name="password" required autocomplete="current-password"></label>
+    <button class="btn block">Masuk</button>
+  </form>
+</section>
+<%- include('partials/footer') %>

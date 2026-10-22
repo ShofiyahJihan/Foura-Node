@@ -2,6 +2,10 @@ const router = require('express').Router();
 const { CategoryProduct, Product, MediaFile } = require('../models');
 const { hitung, KATEGORI_PAKET } = require('../services/kalkulator');
 const { kategori: DATA } = require('../services/katalog-data');
+const pesananRouter = require('./pesanan');
+const { pastikanTabel, dataUser, dataAdmin } = require('../services/pesanan');
+router.use(pesananRouter.localsKeranjang);
+
 
 // "Pro" dan "Paket Pro" dianggap produk yang sama
 const norm = s => String(s).toLowerCase().replace(/^paket\s+/, '').trim();
@@ -134,6 +138,8 @@ router.get('/produk/:id', async (req, res, next) => {
     res.render('produk', { title: produk.name, produk });
   } catch (e) { next(e); }
 });
+
+router.use(pesananRouter);
 
 module.exports = router;
 

@@ -29,13 +29,17 @@
     </nav>
 
     <div class="aksi">
-      <% if (user) { %>
-        <span class="sapa"><a href="/profil"><%= user.first_name || user.username %></a> · <%= LABEL[role] %></span>
-        <form method="post" action="/keluar"><button class="btn ghost">Keluar</button></form>
-      <% } else { %>
-        <a class="btn ghost" href="/masuk">Masuk</a>
-        <a class="btn" href="/daftar">Daftar</a>
-      <% } %>
+      <% if (typeof user !== 'undefined' && user) { %>
+      <% if (role === 'customer') { %>
+  <a href="/keranjang" class="nav-cart">Keranjang<% if (typeof jumlahKeranjang !== 'undefined' && jumlahKeranjang > 0) { %> <span class="nav-cart-n"><%= jumlahKeranjang %></span><% } %></a>
+<% } %>
+  <a href="/dashboard" class="nav-avatar" title="Dashboard">
+    <%= String(user.name || user.nama || user.username || 'U').charAt(0).toUpperCase() %>
+  </a>
+<% } else { %>
+  <a class="btn-outline" href="/masuk">Masuk</a>
+  <a class="btn-solid" href="/daftar">Daftar</a>
+<% } %>
     </div>
 
   </div>

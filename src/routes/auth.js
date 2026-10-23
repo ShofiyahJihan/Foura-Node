@@ -17,6 +17,7 @@ router.post('/daftar', async (req, res, next) => {
       email: (req.body.email || '').trim(),
       no_hp: (req.body.no_hp || '').trim(),
       alamat: (req.body.alamat || '').trim(),
+      nama_umkm: (req.body.nama_umkm || '').trim(),
     };
     const { password, password2 } = req.body;
     let error = null;
@@ -30,7 +31,7 @@ router.post('/daftar', async (req, res, next) => {
 
     const user = await sequelize.transaction(async (t) => {
       const u = await User.create({ username: f.username, password, first_name: f.first_name, email: f.email }, { transaction: t });
-      await UserCostumer.create({ user_id: u.id, alamat: f.alamat || null, no_hp: f.no_hp || null }, { transaction: t });
+      await UserCostumer.create({ user_id: u.id, alamat: f.alamat || null, no_hp: f.no_hp || null, nama_umkm: f.nama_umkm || null }, { transaction: t });
       return u;
     });
     await regenerate(req);

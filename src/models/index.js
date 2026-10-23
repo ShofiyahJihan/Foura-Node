@@ -29,7 +29,10 @@ const profilFields = () => ({
   no_hp:  { type: DataTypes.STRING(20), allowNull: true },
 });
 
-const UserCostumer = sequelize.define('UserCostumer', profilFields(), { tableName: 'user_costumer' });
+const UserCostumer = sequelize.define('UserCostumer', {
+  ...profilFields(),
+  nama_umkm: { type: DataTypes.STRING(150), allowNull: true },
+}, { tableName: 'user_costumer' });
 const UserAdmin    = sequelize.define('UserAdmin',    profilFields(), { tableName: 'user_admin' });
 
 for (const Profil of [UserCostumer, UserAdmin]) {

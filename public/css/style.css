@@ -426,3 +426,47 @@ small{color:#8a7774}
 .ap-form select{padding:10px 14px;border:1px solid #e0cfcb;border-radius:10px;background:#fff;font:inherit;font-size:.88rem}
 
 @media(max-width:900px){.kr-grid{grid-template-columns:1fr}.kr-ringkas{position:static}.kr-item,.rw-item{flex-wrap:wrap}}
+
+
+/* ===== Halaman Profil Pengguna ===== */
+.t{margin:0 0 6px;font-size:1.05rem}
+.d-caret{color:#8a7774;font-size:.8rem}
+.d-badge{display:inline-flex;align-items:center}
+.p-judul{font-size:2rem;margin:0 0 6px}
+.p-ok{background:#e1f2e5;color:#2f7a45;border-radius:10px;padding:10px 14px;font-size:.85rem;margin:14px 0 0}
+.p-err{background:#fbe3e3;color:#b23a48;border-radius:10px;padding:10px 14px;font-size:.85rem;margin:14px 0 0}
+.p-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start;margin-top:20px}
+.p-form{display:flex;flex-direction:column;gap:14px}
+.p-form label{display:flex;flex-direction:column;gap:6px;font-size:.8rem;color:#7a6a67}
+.p-form input,.p-form textarea{padding:11px 14px;border:1px solid #e6d6d2;border-radius:10px;background:#fff;font:inherit;font-size:.9rem;color:#2b2320}
+.p-baris{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.p-head{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.p-head b{display:block;font-size:1rem}
+.p-head small{display:block}
+.p-ava{width:64px;height:64px;border-radius:50%;background:#6b2737;color:#fff;display:grid;place-items:center;font-size:1.6rem;font-weight:600}
+.p-umkm{display:inline-block;margin-top:6px;background:#f3dfdc;color:#6b2737;border-radius:999px;padding:3px 12px;font-size:.75rem}
+.p-simpan{width:100%;padding:13px;font-size:.9rem}
+.p-info{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f1e3e0;font-size:.85rem}
+.p-info:last-child{border-bottom:0}
+@media(max-width:1100px){.p-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.p-baris{grid-template-columns:1fr}}
+
+
+/* ===== Tombol keranjang di katalog ===== */
+[hidden]{display:none!important}
+.kp-ok{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#e1f2e5;color:#2f7a45;border-radius:999px;padding:10px 16px;font-size:.9rem;font-weight:500}
+.kp-batal{background:none;border:0;color:#b23a48;font:inherit;font-size:.85rem;text-decoration:underline;cursor:pointer;padding:0}
+.kp-populer .kp-ok{background:rgba(255,255,255,.18);color:#fff}
+.kp-populer .kp-batal{color:#fff}
+
+
+/* ===== Tombol Pesan Sekarang ===== */
+.kr-ringkas .kr-btn{display:block;width:100%;background:#6b2737;color:#fff;border:0;border-radius:999px;padding:13px;font:inherit;font-size:.95rem;font-weight:500;cursor:pointer;transition:background .2s}
+.kr-ringkas .kr-btn:hover{background:#561f2d}
+
+
+/* ===== Notifikasi (toast) ===== */
+.pesan{position:fixed;top:108px;left:0;right:0;z-index:60;padding:0 16px;display:flex;justify-content:center;pointer-events:none;animation:pesanHilang .4s ease 4s forwards}
+.pesan p{margin:0;width:auto;max-width:420px;padding:12px 24px;border-radius:999px;background:#6b2737;color:#fff;border:0;font-size:.9rem;font-weight:500;text-align:center;box-shadow:0 8px 24px rgba(107,39,55,.25)}
+.pesan p.error{background:#b23a48}
+@keyframes pesanHilang{to{opacity:0;visibility:hidden}}

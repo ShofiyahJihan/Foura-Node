@@ -16,10 +16,13 @@ const wajibAdmin = (req, res, next) => {
 // Jumlah isi keranjang untuk header (dipasang di public.js)
 router.localsKeranjang = async (req, res, next) => {
   res.locals.jumlahKeranjang = 0;
+  res.locals.idKeranjang = [];
   try {
     if (res.locals.user) {
       await pastikanTabel();
-      res.locals.jumlahKeranjang = (await Keranjang.sum('jumlah', { where: { userId: res.locals.user.id } })) || 0;
+      const baris = await Keranjang.findAll({ where: { userId: res.locals.user.id } });
+      res.locals.idKeranjang = baris.map(b => b.productId);
+      res.locals.jumlahKeranjang = baris.reduce((s, b) => s + b.jumlah, 0);
     }
   } catch (e) { /* abaikan */ }
   next();
@@ -47,16 +50,31 @@ async function isiKeranjang(userId) {
 }
 
 // ---------- KERANJANG ----------
-router.post('/keranjang/tambah', wajibLogin, async (req, res, next) => {
+const mintaJson = req => (req.get('accept') || '').includes('application/json');
+const jumlahIsi = async uid => (await Keranjang.sum('jumlah', { where: { userId: uid } })) || 0;
+
+router.post('/keranjang/tambah', async (req, res, next) => {
   try {
+    if (!res.locals.user) return mintaJson(req) ? res.status(401).json({ login: true }) : res.redirect('/masuk');
     await pastikanTabel();
     const produk = await Product.findByPk(req.body.produkId);
-    if (!produk) return res.redirect('/katalog');
+    if (!produk) return mintaJson(req) ? res.status(404).json({ ok: false }) : res.redirect('/katalog');
     const uid = res.locals.user.id;
     const ada = await Keranjang.findOne({ where: { userId: uid, productId: produk.id } });
-    if (ada) await ada.update({ jumlah: ada.jumlah + 1 });
-    else await Keranjang.create({ userId: uid, productId: produk.id, jumlah: 1 });
-    res.redirect('/keranjang');
+    if (!ada) await Keranjang.create({ userId: uid, productId: produk.id, jumlah: 1 });
+    if (mintaJson(req)) return res.json({ ok: true, jumlah: await jumlahIsi(uid) });
+    res.redirect(req.get('referer') || '/katalog');
+  } catch (e) { next(e); }
+});
+
+router.post('/keranjang/batal', async (req, res, next) => {
+  try {
+    if (!res.locals.user) return mintaJson(req) ? res.status(401).json({ login: true }) : res.redirect('/masuk');
+    await pastikanTabel();
+    const uid = res.locals.user.id;
+    await Keranjang.destroy({ where: { userId: uid, productId: req.body.produkId } });
+    if (mintaJson(req)) return res.json({ ok: true, jumlah: await jumlahIsi(uid) });
+    res.redirect(req.get('referer') || '/katalog');
   } catch (e) { next(e); }
 });
 
@@ -91,6 +109,7 @@ router.post('/keranjang/:id/hapus', wajibLogin, async (req, res, next) => {
 
 // ---------- CHECKOUT: membuat pesanan ----------
 router.post('/checkout', wajibLogin, async (req, res, next) => {
+  return res.redirect('/keranjang'); // SEMENTARA: dinonaktifkan sampai fitur pembayaran dibuat
   try {
     await pastikanTabel();
     const u = res.locals.user;

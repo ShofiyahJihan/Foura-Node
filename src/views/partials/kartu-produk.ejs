@@ -28,10 +28,22 @@
 
     <p class="kp-harga"><%= rpFmt(p.price) %> <small><%= satuanTxt %></small></p>
 
-    <form method="POST" action="/keranjang/tambah">
-      <input type="hidden" name="produkId" value="<%= p.id %>">
-      <button type="submit" class="kp-btn">+ Keranjang</button>
-    </form>
+        <%
+      const sudahAda = (typeof idKeranjang !== 'undefined') && idKeranjang.includes(p.id);
+    %>
+    <div class="kp-aksi" data-id="<%= p.id %>">
+      <form method="POST" action="/keranjang/tambah" class="kp-f-tambah" <%= sudahAda ? 'hidden' : '' %>>
+        <input type="hidden" name="produkId" value="<%= p.id %>">
+        <button type="submit" class="kp-btn">+ Keranjang</button>
+      </form>
+      <form method="POST" action="/keranjang/batal" class="kp-f-batal" <%= sudahAda ? '' : 'hidden' %>>
+        <input type="hidden" name="produkId" value="<%= p.id %>">
+        <div class="kp-ok">
+          <span>✓ Ditambahkan</span>
+          <button type="submit" class="kp-batal">Batalkan</button>
+        </div>
+      </form>
+    </div>
   </div>
 </article>
 

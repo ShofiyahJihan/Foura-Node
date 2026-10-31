@@ -67,6 +67,7 @@
     .d-chip small{font-size:.72rem}
     .d-caret{color:#8a7774;font-size:.8rem}
     .d-ava{width:38px;height:38px;border-radius:50%;background:#6b2737;color:#fff;display:grid;place-items:center;font-weight:600}
+    .d-ava-img{object-fit:cover;display:block}
 
     .d-cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
     .d-eyebrow{letter-spacing:.15em;text-transform:uppercase;font-size:.72rem;color:#7a6a67;margin:0 0 6px}
@@ -242,7 +243,7 @@
       <div class="d-user">
         <span class="d-bell" title="Notifikasi">🔔<% if (isAdmin && pesananBaru > 0) { %><i></i><% } else if (!isAdmin) { %><i></i><% } %></span>
         <div class="d-chip">
-          <span class="d-ava"><%= inisial %></span>
+          <% if (locals.fotoUser) { %><img class="d-ava d-ava-img" src="<%= fotoUser %>" alt=""><% } else { %><span class="d-ava"><%= inisial %></span><% } %>
           <div><b><%= locals.nama %></b><small><%= locals.peran %></small></div>
           <span class="d-caret">▾</span>
         </div>

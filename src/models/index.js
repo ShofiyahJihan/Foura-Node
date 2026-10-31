@@ -27,6 +27,7 @@ User.prototype.toString = function () { return `${this.username} - ${this.first_
 const profilFields = () => ({
   alamat: { type: DataTypes.TEXT, allowNull: true },
   no_hp:  { type: DataTypes.STRING(20), allowNull: true },
+  foto:   { type: DataTypes.STRING(255), allowNull: true },
 });
 
 const UserCostumer = sequelize.define('UserCostumer', {

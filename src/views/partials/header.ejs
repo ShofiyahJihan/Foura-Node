@@ -34,8 +34,12 @@
       <% if (role === 'customer') { %>
   <a href="/keranjang" class="nav-cart">Keranjang<% if (typeof jumlahKeranjang !== 'undefined' && jumlahKeranjang > 0) { %> <span class="nav-cart-n"><%= jumlahKeranjang %></span><% } %></a>
 <% } %>
-  <a href="/dashboard" class="nav-avatar" title="Dashboard">
-    <%= String(user.name || user.nama || user.username || 'U').charAt(0).toUpperCase() %>
+    <a href="/dashboard" class="nav-avatar" title="Dashboard">
+    <% if (typeof fotoUser !== 'undefined' && fotoUser) { %>
+      <img src="<%= fotoUser %>" alt="Foto profil">
+    <% } else { %>
+      <%= String(user.first_name || user.username || 'U').charAt(0).toUpperCase() %>
+    <% } %>
   </a>
 <% } else { %>
   <a class="btn-outline" href="/masuk">Masuk</a>

@@ -62,9 +62,19 @@
 
     <div class="p-grid">
       <div class="p-kiri">
-        <form class="d-card p-form" method="post" action="/profil">
+        <form class="d-card p-form" method="post" action="/profil" enctype="multipart/form-data">
           <div class="p-head">
-            <span class="p-ava"><%= String(nama).charAt(0).toUpperCase() %></span>
+            <div class="p-foto">
+              <% if (profil.foto) { %>
+                <img class="p-ava p-ava-img" id="fotoPreview" src="<%= profil.foto %>" alt="Foto profil">
+              <% } else { %>
+                <span class="p-ava" id="fotoHuruf"><%= String(nama).charAt(0).toUpperCase() %></span>
+                <img class="p-ava p-ava-img" id="fotoPreview" alt="Foto profil" hidden>
+              <% } %>
+              <label class="p-ganti">Ganti Foto
+                <input type="file" name="foto" id="fotoInput" accept="image/png,image/jpeg,image/webp" hidden>
+              </label>
+            </div>
             <div>
               <b><%= lengkap %></b>
               <small><%= user.email || '-' %></small>
@@ -127,6 +137,19 @@
   document.getElementById('btnKeluar').addEventListener('click', () => dlg.showModal());
   ['btnBatal', 'btnBatalX'].forEach(id => document.getElementById(id).addEventListener('click', () => dlg.close()));
   dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+</script>
+<script>
+  const fotoInput = document.getElementById('fotoInput');
+  fotoInput.addEventListener('change', () => {
+    const f = fotoInput.files[0];
+    if (!f) return;
+    if (f.size > 2 * 1024 * 1024) { alert('Ukuran foto maksimal 2 MB.'); fotoInput.value = ''; return; }
+    const img = document.getElementById('fotoPreview');
+    img.src = URL.createObjectURL(f);
+    img.hidden = false;
+    const huruf = document.getElementById('fotoHuruf');
+    if (huruf) huruf.hidden = true;
+  });
 </script>
 </body>
 </html>

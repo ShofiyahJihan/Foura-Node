@@ -22,9 +22,9 @@ async function setRole(user, role) {
   const sekarang = await getRole(user);
   if (sekarang === role) return;
   const lama = await getProfile(user, sekarang);
-  const { alamat, no_hp } = lama;
+  const { alamat, no_hp, foto } = lama;
   await Promise.all(Object.values(MODEL_BY_ROLE).map(M => M.destroy({ where: { user_id: user.id } })));
-  await MODEL_BY_ROLE[role].create({ user_id: user.id, alamat, no_hp });
+  await MODEL_BY_ROLE[role].create({ user_id: user.id, alamat, no_hp, foto });
 }
 
 module.exports = { ROLES, LABEL, getRole, getProfile, setRole };

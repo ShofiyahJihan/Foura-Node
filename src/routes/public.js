@@ -139,6 +139,10 @@ router.get('/produk/:id', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+router.get('/syarat-ketentuan', (req, res) => {
+  res.render('syarat', { title: 'Syarat dan Ketentuan' });
+});
+
 router.use(pesananRouter);
 
 module.exports = router;

@@ -37,9 +37,9 @@
       <aside class="kr-ringkas">
         <h3>Ringkasan</h3>
         <div class="kr-total"><span>Total</span><b><%= rp(total) %></b></div>
-        <form method="POST" action="/checkout">
+        <form method="GET" action="/pembayaran">
           <label>Catatan untuk tim (opsional)
-            <textarea name="catatan" rows="3" placeholder="Contoh: brand fashion hijab, target usia 20-30"></textarea>
+            <textarea name="catatan" placeholder="Contoh: brand fashion hijab, target usia 20-30"></textarea>
           </label>
           <button type="submit" class="btn-tambah kr-btn">Pesan Sekarang</button>
         </form>

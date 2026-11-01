@@ -22,6 +22,7 @@ app.use(require('./src/middleware/locals'));
 app.use('/', require('./src/routes/public'));
 app.use('/', require('./src/routes/auth'));
 app.use('/profil', require('./src/routes/profil'));
+app.use('/pembayaran', require('./src/routes/pembayaran'));
 app.use('/kelola', require('./src/routes/kelola'));
 
 app.use((req, res) => res.status(404).render('error', { title: 'Tidak ditemukan', pesan: 'Halaman yang kamu cari tidak ada.' }));

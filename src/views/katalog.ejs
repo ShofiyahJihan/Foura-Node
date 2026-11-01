@@ -2,9 +2,11 @@
 <section class="banner" style="min-height:280px">
   <div class="banner-isi">
     <p class="eyebrow">Layanan Foura Creative</p>
-    <h1>Kelola Media Sosial,<br>Tumbuhkan <em>Brand</em> Kamu</h1>
+    <h1>Kelola Media Sosial,<br>Tumbuhkan <em>Brand</em> Kamu<br>Bersama <em>Foura Creative</em></h1>
+    <p class="banner-teks">Paket dan layanan kami dirancang khusus untuk membantu UMKM fashion di Makassar tampil lebih profesional di media sosial, dari konten kreatif sampai laporan performa.</p>
   </div>
 </section>
+
 
 <section class="page">
   <% if (role === 'guest') { %>
@@ -17,7 +19,9 @@
     </div>
   <% } %>
 
+
   <% const qUrut = urut && urut !== 'rekomendasi' ? 'urut=' + urut : ''; %>
+
 
   <div class="filter-bar">
     <div class="chips">
@@ -26,6 +30,7 @@
         <a class="chip <%= aktif === k.id ? 'on' : '' %>" href="/katalog?kategori=<%= k.id %><%= qUrut ? '&' + qUrut : '' %>"><%= k.name_kategori %></a>
       <% }) %>
     </div>
+
 
     <form class="urut-form" method="GET" action="/katalog">
       <% if (aktif) { %><input type="hidden" name="kategori" value="<%= aktif %>"><% } %>
@@ -37,6 +42,7 @@
       </select>
     </form>
   </div>
+
 
   <% sections.forEach(k => { %>
     <section class="blok" id="kategori-<%= k.id %>">
@@ -54,7 +60,12 @@
     </section>
   <% }) %>
 
+
   <% if (!sections.length) { %><p class="kosong">Belum ada data katalog.</p><% } %>
 </section>
 <%- include('partials/footer') %>
+
+
+
+
 

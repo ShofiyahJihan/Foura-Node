@@ -427,7 +427,6 @@ small{color:#8a7774}
 
 @media(max-width:900px){.kr-grid{grid-template-columns:1fr}.kr-ringkas{position:static}.kr-item,.rw-item{flex-wrap:wrap}}
 
-
 /* ===== Halaman Profil Pengguna ===== */
 .t{margin:0 0 6px;font-size:1.05rem}
 .d-caret{color:#8a7774;font-size:.8rem}
@@ -1098,3 +1097,22 @@ body{background:#f6efeb;color:#2b2320;font-family:'DM Sans',sans-serif}
 .by-logo-dana{color:#118eea;letter-spacing:.12em}
 .by-logo-qris{color:#1d1a19;font-weight:800}
 .by-logo-bank{color:#6b2737;font-size:.75rem}
+
+
+/* ===== Tombol Daftar di navbar (merah marun) ===== */
+.nav a[href="/daftar"]{
+  background:#6b2737 !important;
+  color:#fff !important;
+  border-radius:999px;
+  padding:.55rem 1.5rem;
+  font-weight:600;
+  text-decoration:none;
+  box-shadow:0 6px 16px rgba(107,39,55,.22);
+  transition:background .2s,transform .2s,box-shadow .2s;
+}
+.nav a[href="/daftar"]:hover{
+  background:#561f2d !important;
+  transform:translateY(-1px);
+  box-shadow:0 10px 22px rgba(107,39,55,.3);
+}
+

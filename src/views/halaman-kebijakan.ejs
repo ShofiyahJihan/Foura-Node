@@ -1,0 +1,21 @@
+<%- include('partials/header') %>
+<section class="page tc">
+  <div class="tc-head">
+    <h1><%= judulHalaman %></h1>
+  </div>
+
+  <div class="tc-box kartu">
+    <% bagian.forEach((b, i) => { %>
+      <h2<% if (b.anchor) { %> id="<%= b.anchor %>"<% } %>><%= bagian.length > 1 ? String.fromCharCode(65 + i) + '. ' : '' %><%= b.judul %></h2>
+      <ol class="tc-list">
+        <% b.butir.forEach(t => { %>
+          <li>
+            <b><%= t.judul %></b>
+            <p><%= t.isi %></p>
+          </li>
+        <% }) %>
+      </ol>
+    <% }) %>
+  </div>
+</section>
+<%- include('partials/footer') %>

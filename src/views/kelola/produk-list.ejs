@@ -7,7 +7,7 @@
     <tbody>
     <% daftar.forEach(p => { %>
       <tr>
-        <td><% if (p.image) { %><img class="thumb" src="/uploads/<%= p.image %>" alt=""><% } %></td>
+        <td><% const foto = urlGambar(p); %><% if (foto) { %><img class="thumb" src="<%= foto %>" alt=""><% } %></td>
         <td><a href="/produk/<%= p.id %>"><%= p.name %></a></td>
         <td><%= p.category ? p.category.name_kategori : '-' %></td>
         <td><%= rupiah(p.price) %></td>

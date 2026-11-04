@@ -6,8 +6,9 @@
 <article class="kp <%= p.populer ? 'kp-populer' : '' %>">
   <div class="kp-gambar">
     <% if (p.populer) { %><span class="kp-label">Paling Dipilih</span><% } %>
-    <% if (p.gambar) { %>
-      <img src="<%= p.gambar %>" alt="<%= p.name %>" loading="lazy">
+        <% const foto = p.image ? '/uploads/' + p.image : (p.gambar || ''); %>
+    <% if (foto) { %>
+      <img src="<%= foto %>" alt="<%= p.name %>" loading="lazy">
     <% } else { %>
       <span class="kp-huruf"><%= p.name.replace(/^Paket\s+/, '').charAt(0) %></span>
     <% } %>

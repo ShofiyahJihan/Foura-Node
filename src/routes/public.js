@@ -5,6 +5,7 @@ const { kategori: DATA } = require('../services/katalog-data');
 const pesananRouter = require('./pesanan');
 const { pastikanTabel, dataUser, dataAdmin } = require('../services/pesanan');
 router.use(pesananRouter.localsKeranjang);
+const { ambilHalaman } = require('../services/kebijakan');
 
 
 // "Pro" dan "Paket Pro" dianggap produk yang sama
@@ -139,8 +140,18 @@ router.get('/produk/:id', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-router.get('/syarat-ketentuan', (req, res) => {
-  res.render('syarat', { title: 'Syarat dan Ketentuan' });
+router.get('/syarat-ketentuan', async (req, res, next) => {
+  try {
+    const bagian = await ambilHalaman('syarat-ketentuan');
+    res.render('halaman-kebijakan', { title: 'Syarat dan Ketentuan', judulHalaman: 'Syarat dan Ketentuan', bagian });
+  } catch (e) { next(e); }
+});
+
+router.get('/kebijakan-privasi', async (req, res, next) => {
+  try {
+    const bagian = await ambilHalaman('kebijakan-privasi');
+    res.render('halaman-kebijakan', { title: 'Kebijakan Privasi', judulHalaman: 'Kebijakan Privasi', bagian });
+  } catch (e) { next(e); }
 });
 
 router.use(pesananRouter);

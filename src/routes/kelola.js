@@ -4,11 +4,18 @@ const { requireRole } = require('../middleware/auth');
 const { handleUpload, relPath, removeFile, uploadedFiles } = require('../services/files');
 const { hapusProduk } = require('../services/produk');
 const { ROLES, getRole, setRole } = require('../services/roles');
+const { kategori: DATA } = require('../services/katalog-data');
 
 const adminOnly = requireRole('admin');
 const gambarProduk = handleUpload([{ name: 'image', maxCount: 1 }, { name: 'gambar_tambahan', maxCount: 5 }]);
 const gambarKategori = handleUpload([{ name: 'image', maxCount: 1 }]);
 const bersihkan = (req) => uploadedFiles(req).forEach((f) => removeFile(relPath(f)));
+
+// Foto bawaan per produk (dari katalog-data.js), dipakai kalau admin belum upload
+const norm = s => String(s).toLowerCase().replace(/^paket\s+/, '').trim();
+const GAMBAR_BAWAAN = {};
+DATA.forEach(k => k.products.forEach(p => { GAMBAR_BAWAAN[norm(p.name)] = p.gambar || ''; }));
+const urlGambar = p => (p.image ? '/uploads/' + p.image : (GAMBAR_BAWAAN[norm(p.name)] || ''));
 
 /* ================= Dashboard ================= */
 router.get('/', adminOnly, async (req, res, next) => {
@@ -22,14 +29,15 @@ router.get('/', adminOnly, async (req, res, next) => {
 router.get('/produk', adminOnly, async (req, res, next) => {
   try {
     const daftar = await Product.findAll({ include: [{ model: CategoryProduct, as: 'category' }], order: [['createdAt', 'DESC']] });
-    res.render('kelola/produk-list', { title: 'Kelola Produk', daftar });
+    res.render('kelola/produk-list', { title: 'Kelola Produk', daftar, urlGambar });
   } catch (e) { next(e); }
 });
 
 async function formProduk(res, { produk = null, form = {}, error = null, status = 200 }) {
   const kategori = await CategoryProduct.findAll({ order: [['name_kategori', 'ASC']] });
   const media = produk ? await produk.getGambar_tambahan() : [];
-  res.status(status).render('kelola/produk-form', { title: produk ? 'Ubah Produk' : 'Tambah Produk', produk, form, error, kategori, media });
+  const gambarBawaan = produk ? (GAMBAR_BAWAAN[norm(produk.name)] || '') : '';
+  res.status(status).render('kelola/produk-form', { title: produk ? 'Ubah Produk' : 'Tambah Produk', produk, form, error, kategori, media, gambarBawaan });
 }
 
 router.get('/produk/baru', adminOnly, (req, res, next) => formProduk(res, {}).catch(next));

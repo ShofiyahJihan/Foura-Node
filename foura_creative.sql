@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 04, 2026 at 07:44 AM
+-- Generation Time: Nov 05, 2026 at 09:30 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,58 @@ SET time_zone = "+00:00";
 --
 -- Database: `foura_creative`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `artikel`
+--
+
+CREATE TABLE `artikel` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(200) NOT NULL,
+  `slug` varchar(220) NOT NULL,
+  `ringkasan` varchar(400) DEFAULT NULL,
+  `isi` longtext NOT NULL,
+  `kategori` varchar(80) DEFAULT NULL,
+  `gambar` varchar(500) DEFAULT NULL,
+  `penulis` varchar(100) DEFAULT 'Tim Foura Creative',
+  `penulis_foto` varchar(500) DEFAULT NULL,
+  `terbit` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `artikel_komentar`
+--
+
+CREATE TABLE `artikel_komentar` (
+  `id` int(11) NOT NULL,
+  `artikel_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `nama` varchar(100) NOT NULL,
+  `isi` text NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `artikel_reaksi`
+--
+
+CREATE TABLE `artikel_reaksi` (
+  `id` int(11) NOT NULL,
+  `artikel_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `jenis` enum('suka','simpan') NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -150,7 +202,8 @@ CREATE TABLE `keranjang` (
 --
 
 INSERT INTO `keranjang` (`id`, `user_id`, `product_id`, `jumlah`, `created_at`, `updated_at`) VALUES
-(15, 4, 1, 1, '2026-11-04 03:56:47', '2026-11-04 03:56:47');
+(15, 4, 1, 1, '2026-11-04 03:56:47', '2026-11-04 03:56:47'),
+(16, 4, 16, 1, '2026-11-05 08:26:56', '2026-11-05 08:26:56');
 
 -- --------------------------------------------------------
 
@@ -191,7 +244,13 @@ INSERT INTO `pengaturan` (`kunci`, `nilai`, `created_at`, `updated_at`) VALUES
 ('footer_deskripsi', 'Jasa pengelolaan media sosial untuk UMKM fashion di Makassar. Konten, jadwal posting, sampai laporan performa bulanan.', '2026-11-04 05:02:32', '2026-11-04 05:02:32'),
 ('kontak_instagram', 'fouracreativee', '2026-11-04 05:02:32', '2026-11-04 05:02:32'),
 ('kontak_tiktok', 'fouracreative', '2026-11-04 05:02:32', '2026-11-04 05:02:32'),
-('kontak_wa', '0882-4580-4687', '2026-11-04 05:02:32', '2026-11-04 05:02:32');
+('kontak_wa', '0882-4580-4687', '2026-11-04 05:02:32', '2026-11-04 05:02:32'),
+('tentang_cerita_1', 'Foura Creative didirikan di Makassar oleh sekelompok anak muda yang percaya bahwa setiap brand, sekecil apa pun, layak tampil menarik dan profesional di media sosial.', '2026-11-04 07:34:33', '2026-11-04 07:34:33'),
+('tentang_cerita_2', 'Kami melihat banyak UMKM fashion di Makassar yang punya produk luar biasa, tapi masih kesulitan mengelola media sosial dan membangun citra brand yang kuat. Dari situlah Foura Creative lahir.', '2026-11-04 07:34:33', '2026-11-04 07:34:33'),
+('tentang_cerita_judul', 'Berawal dari kecintaan pada fashion dan dunia digital.', '2026-11-04 07:34:33', '2026-11-04 07:34:33'),
+('tentang_hero_teks', 'Foura Creative hadir untuk membantu brand fashion lokal tumbuh melalui strategi media sosial yang tepat, konten yang berkualitas, dan pendekatan yang kreatif serta berkelanjutan.', '2026-11-04 07:34:33', '2026-11-04 07:34:33'),
+('tentang_tim_judul', 'Di balik setiap konten hebat, ada tim yang luar biasa.', '2026-11-04 07:34:33', '2026-11-04 07:34:33'),
+('tentang_tim_teks', 'Foura Creative terdiri dari mahasiswa yang bekerja sebagai strategist, analyst, dan content creator, dengan semangat membantu brand fashion lokal di Makassar berkembang.', '2026-11-04 07:34:33', '2026-11-04 07:34:33');
 
 -- --------------------------------------------------------
 
@@ -265,24 +324,24 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`id`, `name`, `deskripsi`, `price`, `image`, `created_at`, `updated_at`, `category_id`) VALUES
-(1, 'Paket Basic', 'Cocok untuk bisnis yang baru memulai.', 500000.00, 'product_images/1426e4704cd734a8486ada1f.jpg', '2026-10-18 21:27:57', '2026-11-04 06:30:10', 1),
-(2, 'Paket Pro', 'Untuk bisnis yang ingin lebih berkembang.', 1100000.00, 'product_images/737143b3dae35f9d1408ec63.jpg', '2026-10-18 21:27:57', '2026-11-04 06:30:20', 1),
-(3, 'Paket Premium', 'Untuk brand yang ingin hasil maksimal.', 2000000.00, 'product_images/46945e7cc22ae5dfa749b045.jpg', '2026-10-18 21:27:57', '2026-11-04 06:30:29', 1),
-(14, 'Konten Feed Instagram', 'Desain feed Instagram yang rapi dan sesuai karakter brand.', 35000.00, 'product_images/0e81b3ee556980f6db0ab6de.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 2),
-(15, 'Konten Video TikTok', 'Video pendek untuk meningkatkan engagement.', 45000.00, 'product_images/185fbef42347d41e45eeda91.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 2),
-(16, 'Sesi Foto Produk Profesional', 'Foto produk berkualitas tinggi dan estetik.', 350000.00, 'product_images/9eedf61f7a336580a1403cab.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 2),
-(17, 'Video Promosi Produk', 'Video promosi untuk menampilkan produk secara menarik.', 150000.00, 'product_images/9365cd96ac3e9c465a2b8bf9.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 2),
-(18, 'Desain Konten Promo Musiman', 'Desain promosi untuk momen spesial.', 200000.00, 'product_images/6b688d34874fe9f0b417db31.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 2),
-(19, 'Kelola Instagram', 'Pengelolaan akun Instagram secara rutin.', 130000.00, 'product_images/c9b501f8af729061e6832e7a.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 3),
-(20, 'Kelola TikTok', 'Pengelolaan akun TikTok secara rutin.', 130000.00, 'product_images/45f5f151295c810757bbfe13.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 3),
-(21, 'Jadwal Posting Instagram', 'Penjadwalan posting Instagram agar konsisten.', 45000.00, 'product_images/2b1e554d650cbd586cc24f74.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 3),
-(22, 'Jadwal Posting TikTok', 'Penjadwalan posting TikTok agar konsisten.', 45000.00, 'product_images/96b0a2f07aad1b8579ff62cb.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 3),
-(23, 'Setup Awal Akun', 'Penyiapan akun media sosial dari awal.', 200000.00, 'product_images/4ab5b378750c634a08c7cf67.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 3),
-(24, 'Riset & Strategi Konten Bulanan', 'Riset tren dan rencana konten untuk satu bulan.', 150000.00, 'product_images/5215b7ce0feb5cb827c4efff.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 3),
-(25, 'Laporan Performa Sederhana', 'Ringkasan performa akun media sosial.', 75000.00, 'product_images/dbcae3476334c01172711ebd.jpg', '2026-10-18 21:28:12', '2026-11-04 06:28:32', 4),
-(26, 'Laporan Performa Detail', 'Analisis performa akun yang lebih mendalam.', 175000.00, 'product_images/f7050540a87c0ed8a64c3cee.jpg', '2026-10-18 21:28:12', '2026-11-04 06:29:12', 4),
-(27, 'Sesi Konsultasi Strategi', 'Diskusi strategi konten bersama tim kami.', 100000.00, 'product_images/ed88427327eb5847de439c9b.jpg', '2026-10-18 21:28:12', '2026-11-04 06:29:29', 4),
-(28, 'Paket Konsultasi Rutin', 'Konsultasi berkala untuk menjaga arah strategi.', 180000.00, 'product_images/fecbc644ad6a890b4b6bfa13.jpg', '2026-10-18 21:28:12', '2026-11-04 06:29:54', 4);
+(1, 'Paket Basic', 'Cocok untuk bisnis yang baru memulai.', 500000.00, 'product_images/1426e4704cd734a8486ada1f.jpg', '2026-10-18 21:27:57', '2026-11-05 07:45:17', 1),
+(2, 'Paket Pro', 'Untuk bisnis yang ingin lebih berkembang.', 1100000.00, 'product_images/737143b3dae35f9d1408ec63.jpg', '2026-10-18 21:27:57', '2026-11-05 07:45:17', 1),
+(3, 'Paket Premium', 'Untuk brand yang ingin hasil maksimal.', 2000000.00, 'product_images/46945e7cc22ae5dfa749b045.jpg', '2026-10-18 21:27:57', '2026-11-05 07:45:17', 1),
+(14, 'Konten Feed Instagram', 'Desain feed Instagram yang rapi dan sesuai karakter brand.', 35000.00, 'product_images/0e81b3ee556980f6db0ab6de.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 2),
+(15, 'Konten Video TikTok', 'Video pendek untuk meningkatkan engagement.', 45000.00, 'product_images/185fbef42347d41e45eeda91.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 2),
+(16, 'Sesi Foto Produk Profesional', 'Foto produk berkualitas tinggi dan estetik.', 350000.00, 'product_images/9eedf61f7a336580a1403cab.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 2),
+(17, 'Video Promosi Produk', 'Video promosi untuk menampilkan produk secara menarik.', 150000.00, 'product_images/9365cd96ac3e9c465a2b8bf9.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 2),
+(18, 'Desain Konten Promo Musiman', 'Desain promosi untuk momen spesial.', 200000.00, 'product_images/6b688d34874fe9f0b417db31.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 2),
+(19, 'Kelola Instagram', 'Pengelolaan akun Instagram secara rutin.', 130000.00, 'product_images/c9b501f8af729061e6832e7a.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
+(20, 'Kelola TikTok', 'Pengelolaan akun TikTok secara rutin.', 130000.00, 'product_images/45f5f151295c810757bbfe13.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
+(21, 'Jadwal Posting Instagram', 'Penjadwalan posting Instagram agar konsisten.', 45000.00, 'product_images/2b1e554d650cbd586cc24f74.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
+(22, 'Jadwal Posting TikTok', 'Penjadwalan posting TikTok agar konsisten.', 45000.00, 'product_images/96b0a2f07aad1b8579ff62cb.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
+(23, 'Setup Awal Akun', 'Penyiapan akun media sosial dari awal.', 200000.00, 'product_images/4ab5b378750c634a08c7cf67.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
+(24, 'Riset & Strategi Konten Bulanan', 'Riset tren dan rencana konten untuk satu bulan.', 150000.00, 'product_images/5215b7ce0feb5cb827c4efff.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
+(25, 'Laporan Performa Sederhana', 'Ringkasan performa akun media sosial.', 75000.00, 'product_images/dbcae3476334c01172711ebd.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 4),
+(26, 'Laporan Performa Detail', 'Analisis performa akun yang lebih mendalam.', 175000.00, 'product_images/f7050540a87c0ed8a64c3cee.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 4),
+(27, 'Sesi Konsultasi Strategi', 'Diskusi strategi konten bersama tim kami.', 100000.00, 'product_images/ed88427327eb5847de439c9b.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 4),
+(28, 'Paket Konsultasi Rutin', 'Konsultasi berkala untuk menjaga arah strategi.', 180000.00, 'product_images/fecbc644ad6a890b4b6bfa13.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 4);
 
 -- --------------------------------------------------------
 
@@ -296,6 +355,77 @@ CREATE TABLE `product_media` (
   `product_id` int(11) NOT NULL,
   `media_file_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tentang_item`
+--
+
+CREATE TABLE `tentang_item` (
+  `id` int(11) NOT NULL,
+  `jenis` varchar(20) NOT NULL,
+  `judul` varchar(150) NOT NULL,
+  `teks` text DEFAULT NULL,
+  `ikon` varchar(20) DEFAULT NULL,
+  `foto` varchar(255) DEFAULT NULL,
+  `urutan` int(11) DEFAULT 0,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tentang_item`
+--
+
+INSERT INTO `tentang_item` (`id`, `jenis`, `judul`, `teks`, `ikon`, `foto`, `urutan`, `created_at`, `updated_at`) VALUES
+(1, 'keunggulan', 'Kreatif & Strategis', 'Setiap konten dirancang dengan strategi yang matang, bukan sekadar tampil.', 'bulb', NULL, 1, '2026-11-04 07:34:35', '2026-11-04 07:34:35'),
+(2, 'keunggulan', 'Tim Profesional', 'Dikerjakan oleh tim yang paham media sosial dan dunia fashion.', 'users', NULL, 2, '2026-11-04 07:34:35', '2026-11-04 07:34:35'),
+(3, 'keunggulan', 'Fokus pada Hasil', 'Kami tidak hanya membuat konten, tapi juga memantau performa dan terus memperbaiki.', 'chart', NULL, 3, '2026-11-04 07:34:35', '2026-11-04 07:34:35'),
+(4, 'keunggulan', 'Tumbuh Bersama', 'Kami ingin brand kamu tumbuh panjang dan berkelanjutan bersama kami.', 'heart', NULL, 4, '2026-11-04 07:34:35', '2026-11-04 07:34:35'),
+(5, 'tim', 'Mutiah Anwar', 'Strategist', NULL, '/images/tim/mutiah.jpg', 1, '2026-11-04 07:34:35', '2026-11-04 07:34:35'),
+(6, 'tim', 'Nadyah Fakhiriyah Izzah FS', 'Analyst', NULL, '/images/tim/nadyah.jpg', 2, '2026-11-04 07:34:35', '2026-11-04 07:34:35'),
+(7, 'tim', 'Shofiyah Jihan Aulia Anwar', 'CEO', NULL, '/images/tim/shofiyah.jpg', 3, '2026-11-04 07:34:35', '2026-11-04 07:34:35'),
+(8, 'tim', 'Siti Nadhifa Fadhilah', 'Content Creator', NULL, '/images/tim/nadhifa.jpg', 4, '2026-11-04 07:34:35', '2026-11-04 07:34:35'),
+(9, 'nilai', 'Kreativitas Tanpa Batas', 'Kami selalu mencari ide segar yang relevan dengan brand kamu.', NULL, NULL, 1, '2026-11-04 07:34:35', '2026-11-04 07:34:35'),
+(10, 'nilai', 'Integritas', 'Kerja jujur, transparan, dan bisa dipercaya.', NULL, NULL, 2, '2026-11-04 07:34:35', '2026-11-04 07:34:35'),
+(11, 'nilai', 'Kolaborasi', 'Kami bekerja bersama klien, bukan hanya untuk klien.', NULL, NULL, 3, '2026-11-04 07:34:35', '2026-11-04 07:34:35'),
+(12, 'nilai', 'Pertumbuhan Berkelanjutan', 'Fokus pada hasil jangka panjang, bukan tren sesaat.', NULL, NULL, 4, '2026-11-04 07:34:35', '2026-11-04 07:34:35');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tentang_teks`
+--
+
+CREATE TABLE `tentang_teks` (
+  `id` int(11) NOT NULL,
+  `kunci` varchar(60) NOT NULL,
+  `nilai` text DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tentang_teks`
+--
+
+INSERT INTO `tentang_teks` (`id`, `kunci`, `nilai`, `created_at`, `updated_at`) VALUES
+(1, 'hero_judul', 'Kami adalah partner kreatif untuk UMKM *fashion* di Makassar.', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(2, 'hero_teks', 'Foura Creative hadir untuk membantu brand fashion lokal tumbuh melalui strategi media sosial yang tepat, konten yang berkualitas, dan pendekatan yang kreatif serta berkelanjutan.', '2026-11-05 06:52:03', '2026-11-05 07:03:23'),
+(3, 'hero_gambar', '/images/tentang/hero.jpg', '2026-11-05 06:52:03', '2026-11-05 07:03:23'),
+(4, 'cerita_judul', 'Berawal dari kecintaan pada fashion dan dunia digital.', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(5, 'cerita_1', 'Foura Creative didirikan di Makassar oleh sekelompok anak muda yang percaya bahwa setiap brand, sekecil apa pun, layak tampil menarik dan profesional di media sosial.', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(6, 'cerita_2', 'Kami melihat banyak UMKM fashion di Makassar yang punya produk luar biasa, tapi masih kesulitan mengelola media sosial dan membangun citra brand yang kuat. Dari situlah Foura Creative lahir.', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(7, 'cerita_tombol', 'Lihat Layanan →', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(8, 'cerita_gambar', '/images/tentang/cerita.jpg', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(9, 'tim_judul', 'Di balik setiap konten hebat, ada tim yang luar biasa.', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(10, 'tim_teks', 'Foura Creative terdiri dari individu-individu berbakat yang berkolaborasi untuk membuat konten terbaik bagi brand kamu.', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(11, 'nilai_judul', 'Nilai yang selalu kami pegang.', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(12, 'nilai_gambar', '/images/tentang/nilai.jpg', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(13, 'cta_eyebrow', 'SIAP MEMBANGUN BRAND KAMU?', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(14, 'cta_judul', 'Yuk, mulai perjalanan kreatif bersama Foura Creative.', '2026-11-05 06:52:03', '2026-11-05 07:08:24'),
+(15, 'cta_tombol', 'Hubungi Kami →', '2026-11-05 06:52:03', '2026-11-05 07:08:24');
 
 -- --------------------------------------------------------
 
@@ -348,6 +478,26 @@ INSERT INTO `user_costumer` (`id`, `alamat`, `no_hp`, `created_at`, `updated_at`
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `artikel`
+--
+ALTER TABLE `artikel`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indexes for table `artikel_komentar`
+--
+ALTER TABLE `artikel_komentar`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `artikel_reaksi`
+--
+ALTER TABLE `artikel_reaksi`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `artikel_reaksi_artikel_id_user_id_jenis` (`artikel_id`,`user_id`,`jenis`);
 
 --
 -- Indexes for table `auth_user`
@@ -421,6 +571,19 @@ ALTER TABLE `product_media`
   ADD KEY `media_file_id` (`media_file_id`);
 
 --
+-- Indexes for table `tentang_item`
+--
+ALTER TABLE `tentang_item`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tentang_teks`
+--
+ALTER TABLE `tentang_teks`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `kunci` (`kunci`);
+
+--
 -- Indexes for table `user_admin`
 --
 ALTER TABLE `user_admin`
@@ -437,6 +600,24 @@ ALTER TABLE `user_costumer`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `artikel`
+--
+ALTER TABLE `artikel`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `artikel_komentar`
+--
+ALTER TABLE `artikel_komentar`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `artikel_reaksi`
+--
+ALTER TABLE `artikel_reaksi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `auth_user`
@@ -466,7 +647,7 @@ ALTER TABLE `kebijakan_butir`
 -- AUTO_INCREMENT for table `keranjang`
 --
 ALTER TABLE `keranjang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `media_file`
@@ -491,6 +672,18 @@ ALTER TABLE `pesanan_item`
 --
 ALTER TABLE `product`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+--
+-- AUTO_INCREMENT for table `tentang_item`
+--
+ALTER TABLE `tentang_item`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `tentang_teks`
+--
+ALTER TABLE `tentang_teks`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `user_admin`

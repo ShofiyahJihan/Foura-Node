@@ -6,6 +6,7 @@ const pesananRouter = require('./pesanan');
 const { pastikanTabel, dataUser, dataAdmin } = require('../services/pesanan');
 router.use(pesananRouter.localsKeranjang);
 const { ambilHalaman } = require('../services/kebijakan');
+const { ambilTentang } = require('../services/tentang');
 
 
 // "Pro" dan "Paket Pro" dianggap produk yang sama
@@ -154,7 +155,13 @@ router.get('/kebijakan-privasi', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+router.get('/tentang', async (req, res, next) => {
+  try {
+    const T = await ambilTentang();
+    res.render('tentang', { title: 'Tentang Kami', T });
+  } catch (e) { next(e); }
+});
+
 router.use(pesananRouter);
 
 module.exports = router;
-

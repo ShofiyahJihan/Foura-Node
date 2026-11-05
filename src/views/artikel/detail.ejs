@@ -1,0 +1,148 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/css/artikel-detail.css">
+
+
+<article class="dt-wrap">
+
+
+  <header class="dt-kepala">
+    <% if (!a.terbit) { %>
+      <p class="err">Pratinjau: artikel ini belum diterbitkan dan hanya terlihat oleh admin.</p>
+    <% } %>
+    <% if (a.kategori) { %>
+      <a class="dt-badge" href="/artikel?kategori=<%= encodeURIComponent(a.kategori) %>"><%= a.kategori %></a>
+    <% } %>
+    <h1 class="dt-judul"><%= a.judul %></h1>
+
+
+    <div class="dt-penulis">
+      <% if (a.penulisFoto) { %>
+        <img class="dt-ava" src="<%= a.penulisFoto %>" alt="">
+      <% } else { %>
+        <span class="dt-ava"><%= (a.penulis || 'T').charAt(0).toUpperCase() %></span>
+      <% } %>
+      <b><%= a.penulis || 'Tim Foura Creative' %></b>
+      <span>· <%= a.tanggal %></span>
+    </div>
+  </header>
+
+
+  <% if (a.gambar) { %>
+    <img class="dt-sampul" src="<%= a.gambar %>" alt="<%= a.judul %>">
+  <% } %>
+
+
+  <div class="dt-layout">
+
+
+    <!-- KIRI -->
+    <div class="dt-utama">
+
+
+      <div class="dt-bar">
+        <%- include('aksi') %>
+      </div>
+
+
+      <div class="dt-teks">
+        <% a.isi.forEach(b => { %>
+          <% if (b.tipe === 'h2') { %>
+            <h2><%= b.teks %></h2>
+          <% } else if (b.tipe === 'ul') { %>
+            <ul><% b.item.forEach(i => { %><li><%= i %></li><% }) %></ul>
+          <% } else { %>
+            <p><%= b.teks %></p>
+          <% } %>
+        <% }) %>
+      </div>
+
+
+      <section class="dt-kom" id="komentar">
+        <h3>Komentar (<%= komentar.length %>)</h3>
+
+
+        <% if (login) { %>
+          <form class="dt-kom-form" method="POST" action="/artikel/<%= a.slug %>/komentar">
+            <textarea name="isi" maxlength="1000" placeholder="Tulis komentar kamu…" required></textarea>
+            <button type="submit">Kirim komentar</button>
+          </form>
+        <% } else { %>
+          <p class="dt-kom-info">Masuk untuk menulis komentar.</p>
+        <% } %>
+
+
+        <% komentar.forEach(k => { %>
+          <div class="dt-kom-item">
+            <div class="dt-kom-kepala">
+              <b><%= k.nama %></b>
+              <small><%= k.waktu %></small>
+              <% if (k.milikku) { %>
+                <form method="POST" action="/artikel/<%= a.slug %>/komentar/<%= k.id %>/hapus" onsubmit="return confirm('Hapus komentar ini?')">
+                  <button type="submit" class="dt-kom-hapus">Hapus</button>
+                </form>
+              <% } %>
+            </div>
+            <p><%= k.isi %></p>
+          </div>
+        <% }) %>
+      </section>
+    </div>
+
+
+    <!-- KANAN -->
+    <aside class="dt-samping">
+      <div class="dt-kartu">
+        <small>Ditulis oleh</small>
+        <div class="dt-orang">
+          <% if (a.penulisFoto) { %>
+            <img class="dt-ava besar" src="<%= a.penulisFoto %>" alt="">
+          <% } else { %>
+            <span class="dt-ava besar"><%= (a.penulis || 'T').charAt(0).toUpperCase() %></span>
+          <% } %>
+          <div>
+            <b><%= a.penulis || 'Tim Foura Creative' %></b>
+            <span>Penulis di Foura Creative</span>
+          </div>
+        </div>
+        <div class="dt-tgl"><%= a.tanggal %></div>
+      </div>
+
+
+      <div class="dt-cta">
+        <h3>Butuh bantuan mengelola media sosial brand kamu?</h3>
+        <p>Lihat paket dan layanan Foura Creative.</p>
+        <a href="/katalog">Lihat Katalog Layanan</a>
+      </div>
+    </aside>
+  </div>
+</article>
+
+
+<% if (lain.length) { %>
+<section class="dt-lain">
+  <h2>Baca juga</h2>
+  <div class="dt-lain-grid">
+    <% lain.forEach(l => { %>
+      <a class="dt-lain-kartu" href="/artikel/<%= l.slug %>">
+        <div class="dt-lain-thumb">
+          <% if (l.gambar) { %>
+            <img src="<%= l.gambar %>" alt="">
+          <% } else { %>
+            <span><%= (l.judul || 'A').charAt(0).toUpperCase() %></span>
+          <% } %>
+        </div>
+        <div class="dt-lain-isi">
+          <% if (l.kategori) { %><span class="dt-lain-kat"><%= l.kategori %></span><% } %>
+          <h3><%= l.judul %></h3>
+          <p><%= l.ringkasan %></p>
+          <small><%= l.tanggal %> · <%= l.menit %> menit baca</small>
+        </div>
+      </a>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+
+<%- include('../partials/footer') %>
+

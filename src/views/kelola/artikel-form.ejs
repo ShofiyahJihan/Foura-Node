@@ -1,0 +1,26 @@
+<%- include('../partials/dash-header', { aktif: 'artikel', judul: 'Kelola Artikel' }) %>
+<section class="form-wrap wide">
+  <h1><%= artikel ? 'Ubah Artikel' : 'Tulis Artikel' %></h1>
+  <% if (error) { %><p class="err"><%= error %></p><% } %>
+  <form method="post" action="<%= artikel ? '/kelola/artikel/' + artikel.id : '/kelola/artikel' %>" class="form kartu">
+    <label>Judul<input name="judul" maxlength="200" value="<%= form.judul || '' %>" required></label>
+    <div class="dua">
+      <label>Kategori <span class="bantuan">(contoh: Tips Konten)</span><input name="kategori" maxlength="60" value="<%= form.kategori || '' %>"></label>
+      <label>Alamat gambar <span class="bantuan">(link, boleh kosong)</span><input name="gambar" value="<%= form.gambar || '' %>" placeholder="https://… atau /images/nama.jpg"></label>
+    </div>
+    <div class="dua">
+      <label>Nama penulis <span class="bantuan">(kosong = nama akunmu)</span><input name="penulis" maxlength="100" value="<%= form.penulis || '' %>" placeholder="Tim Foura Creative"></label>
+      <label>Foto penulis <span class="bantuan">(link, boleh kosong)</span><input name="penulisFoto" value="<%= form.penulisFoto || '' %>" placeholder="https://… atau /images/logo.png"></label>
+    </div>
+    <label>Ringkasan <span class="bantuan">(tampil di daftar artikel, maks. 300 huruf)</span><textarea name="ringkasan" rows="2" maxlength="300"><%= form.ringkasan || '' %></textarea></label>
+    <label>Isi artikel
+      <textarea name="isi" rows="16" required><%= form.isi || '' %></textarea>
+    </label>
+    <p class="bantuan">Cara menulis: kosongkan satu baris untuk paragraf baru. Awali baris dengan <b>##</b> untuk subjudul, dan awali dengan <b>-</b> untuk daftar poin.</p>
+    <label style="flex-direction:row;align-items:center;gap:.6rem"><input type="checkbox" name="terbit" <%= form.terbit ? 'checked' : '' %>> Terbitkan sekarang (hilangkan centang untuk menyimpan sebagai draf)</label>
+    <button class="btn">Simpan</button>
+  </form>
+  <p><a href="/kelola/artikel">← Kembali</a></p>
+</section>
+<%- include('../partials/dash-footer') %>
+

@@ -1,0 +1,9 @@
+const { sequelize } = require('./models');
+const sinkronDb = require('./services/sinkron-db');
+
+
+(async () => {
+  await sinkronDb(sequelize);
+  console.log('Database sudah sinkron dengan kode.');
+  await sequelize.close();
+})();

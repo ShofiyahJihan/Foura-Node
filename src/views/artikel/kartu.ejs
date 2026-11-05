@@ -1,0 +1,16 @@
+<a class="ar-kartu" href="/artikel/<%= a.slug %>">
+  <div class="ar-gambar">
+    <% if (a.gambar) { %>
+      <img src="<%= a.gambar %>" alt="<%= a.judul %>" loading="lazy">
+    <% } else { %>
+      <span class="ar-huruf"><%= a.judul.charAt(0).toUpperCase() %></span>
+    <% } %>
+  </div>
+  <div class="ar-isi">
+    <% if (a.kategori) { %><span class="ar-badge"><%= a.kategori %></span><% } %>
+    <h3><%= a.judul %></h3>
+    <p><%= a.ringkasan %></p>
+    <small class="ar-meta"><%= a.tanggal %> · <%= a.menit %> menit baca</small>
+  </div>
+</a>
+

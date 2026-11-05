@@ -1,0 +1,73 @@
+<%- include('../partials/dash-header', { aktif: 'artikel', judul: 'Kelola Tentang Kami' }) %>
+
+<%
+const LABEL = {
+    hero_judul: 'Hero: judul (kata miring marun: *kata*)',
+  cerita_judul: 'Cerita: judul', cerita_1: 'Cerita: paragraf 1', cerita_2: 'Cerita: paragraf 2',
+  cerita_tombol: 'Cerita: teks tombol', cerita_gambar: 'Cerita: gambar (link/path)',
+  tim_judul: 'Tim: judul', tim_teks: 'Tim: paragraf',
+  nilai_judul: 'Nilai: judul', nilai_gambar: 'Nilai: gambar (link/path)',
+  cta_eyebrow: 'Ajakan: teks kecil', cta_judul: 'Ajakan: judul', cta_tombol: 'Ajakan: teks tombol',
+};
+const PANJANG = ['hero_teks', 'cerita_1', 'cerita_2', 'tim_teks'];
+const GRUP = [['keunggulan', 'Keunggulan'], ['tim', 'Tim kami'], ['nilai', 'Nilai & visi']];
+%>
+
+<section class="form-wrap wide">
+  <h1>Kelola Tentang Kami</h1>
+  <% if (ok) { %><p class="bantuan" style="color:#2f7a45">Tersimpan.</p><% } %>
+
+  <form method="post" action="/kelola/tentang/teks" class="form kartu">
+    <h3>Teks &amp; gambar halaman</h3>
+    <% Object.keys(LABEL).forEach(k => { %>
+      <label><%= LABEL[k] %>
+        <% if (PANJANG.includes(k)) { %>
+          <textarea name="<%= k %>" rows="3"><%= T.teks[k] %></textarea>
+        <% } else { %>
+          <input name="<%= k %>" value="<%= T.teks[k] %>">
+        <% } %>
+      </label>
+    <% }) %>
+    <button class="btn" type="submit">Simpan teks</button>
+  </form>
+
+  <% GRUP.forEach(([jenis, nama]) => { %>
+    <div class="kartu" style="margin-top:1.2rem">
+      <h3><%= nama %></h3>
+
+      <% T[jenis].forEach(it => { %>
+        <form method="post" action="/kelola/tentang/item/<%= it.id %>" class="form" style="border-bottom:1px solid var(--line);padding-bottom:1rem">
+          <div class="dua">
+            <label>Judul / nama <input name="judul" value="<%= it.judul %>" required></label>
+            <label>Urutan <input name="urutan" type="number" value="<%= it.urutan %>"></label>
+          </div>
+          <label>Teks / jabatan <textarea name="teks" rows="2"><%= it.teks || '' %></textarea></label>
+          <% if (jenis === 'keunggulan') { %>
+            <label>Ikon <span class="bantuan">(bulb, users, chart, heart)</span> <input name="ikon" value="<%= it.ikon || '' %>"></label>
+          <% } %>
+          <% if (jenis === 'tim') { %>
+            <label>Foto <span class="bantuan">(link/path)</span> <input name="foto" value="<%= it.foto || '' %>"></label>
+          <% } %>
+          <div style="display:flex;gap:.5rem">
+            <button class="btn sm" type="submit">Simpan</button>
+            <button class="btn sm bahaya" type="submit" formaction="/kelola/tentang/item/<%= it.id %>/hapus" onclick="return confirm('Hapus item ini?')">Hapus</button>
+          </div>
+        </form>
+      <% }) %>
+
+      <form method="post" action="/kelola/tentang/item/tambah/<%= jenis %>" class="form">
+        <b>Tambah baru</b>
+        <div class="dua">
+          <label>Judul / nama <input name="judul" required></label>
+          <label>Urutan <input name="urutan" type="number" value="<%= T[jenis].length + 1 %>"></label>
+        </div>
+        <label>Teks / jabatan <textarea name="teks" rows="2"></textarea></label>
+        <% if (jenis === 'keunggulan') { %><label>Ikon <input name="ikon" placeholder="bulb"></label><% } %>
+        <% if (jenis === 'tim') { %><label>Foto <input name="foto" placeholder="/images/tim/nama.jpg"></label><% } %>
+        <button class="btn sm" type="submit">Tambah</button>
+      </form>
+    </div>
+  <% }) %>
+</section>
+
+<%- include('../partials/dash-footer') %>

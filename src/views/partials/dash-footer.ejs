@@ -1,0 +1,22 @@
+  </main>
+</div>
+
+<dialog id="dlgKeluar" class="d-dialog">
+  <button type="button" class="d-x" id="btnBatalX" aria-label="Tutup">×</button>
+  <span class="d-dlg-ico">⇥</span>
+  <h3>Keluar dari Akun?</h3>
+  <p>Kamu akan kembali ke halaman utama. Pastikan semua perubahan sudah tersimpan.</p>
+  <div class="d-dlg-aksi">
+    <button type="button" class="d-btn-out" id="btnBatal">Batal</button>
+    <form method="POST" action="/keluar"><button type="submit" class="d-btn">Keluar</button></form>
+  </div>
+</dialog>
+
+<script>
+  const dlg = document.getElementById('dlgKeluar');
+  document.getElementById('btnKeluar').addEventListener('click', () => dlg.showModal());
+  ['btnBatal', 'btnBatalX'].forEach(id => document.getElementById(id).addEventListener('click', () => dlg.close()));
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+</script>
+</body>
+</html>

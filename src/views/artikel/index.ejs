@@ -1,0 +1,78 @@
+<%- include('../partials/header') %>
+
+
+<link rel="stylesheet" href="/css/artikel.css">
+
+
+<section class="ar-hero">
+  <div class="ar-hero-in">
+    <p class="ar-eyebrow">Artikel Foura Creative</p>
+    <h1>Tips dan Inspirasi untuk Kembangkan <em>Brand</em> Kamu Bersama <em>Foura Creative</em></h1>
+    <p class="ar-sub">Bacaan singkat seputar media sosial, konten, dan strategi digital yang dirancang khusus untuk membantu UMKM fashion di Makassar tampil lebih profesional, dari ide konten kreatif sampai tips meningkatkan performa.</p>
+  </div>
+</section>
+
+
+<section class="fd-wrap">
+
+
+  <form class="fd-cari" method="GET" action="/artikel">
+    <% if (kat) { %><input type="hidden" name="kategori" value="<%= kat %>"><% } %>
+    <% if (simpanan) { %><input type="hidden" name="simpanan" value="1"><% } %>
+    <input type="search" name="q" value="<%= q %>" placeholder="Cari artikel…" aria-label="Cari artikel">
+    <button type="submit">Cari</button>
+  </form>
+
+
+  <nav class="fd-tabs" aria-label="Kategori artikel">
+    <a class="<%= !kat && !simpanan ? 'on' : '' %>" href="/artikel<%= q ? '?q=' + encodeURIComponent(q) : '' %>">Semua</a>
+    <% daftarKategori.forEach(k => { %>
+      <a class="<%= kat === k ? 'on' : '' %>" href="/artikel?kategori=<%= encodeURIComponent(k) %><%= q ? '&q=' + encodeURIComponent(q) : '' %>"><%= k %></a>
+    <% }) %>
+    <% if (login) { %>
+      <a class="<%= simpanan ? 'on' : '' %>" href="/artikel?simpanan=1">Tersimpan</a>
+    <% } %>
+  </nav>
+
+
+  <% if (q) { %>
+    <p class="fd-info">
+      <%= artikel.length %> hasil untuk “<%= q %>” ·
+      <a href="/artikel<%= kat ? '?kategori=' + encodeURIComponent(kat) : '' %>">Hapus pencarian</a>
+    </p>
+  <% } %>
+
+
+  <% if (artikel.length) { %>
+    <div class="fd-list">
+      <% artikel.forEach(a => { %>
+        <article class="fd-item">
+          <div class="fd-teks">
+            <%- include('penulis', { a }) %>
+            <h3><a class="fd-link" href="/artikel/<%= a.slug %>"><%= a.judul %></a></h3>
+            <p><%= a.ringkasan %></p>
+            <div class="fd-bawah">
+              <% if (a.kategori) { %>
+                <a class="fd-kat" href="/artikel?kategori=<%= encodeURIComponent(a.kategori) %>"><%= a.kategori %></a>
+              <% } %>
+            </div>
+          </div>
+
+
+          <a class="fd-thumb" href="/artikel/<%= a.slug %>" tabindex="-1" aria-hidden="true">
+            <% if (a.gambar) { %>
+              <img src="<%= a.gambar %>" alt="" loading="lazy">
+            <% } else { %>
+              <span><%= a.judul.charAt(0).toUpperCase() %></span>
+            <% } %>
+          </a>
+        </article>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p class="kosong"><%= simpanan ? 'Belum ada artikel tersimpan.' : (q || kat ? 'Tidak ada artikel yang cocok.' : 'Belum ada artikel. Nantikan tulisan terbaru dari kami.') %></p>
+  <% } %>
+</section>
+
+
+<%- include('../partials/footer') %>

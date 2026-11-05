@@ -12,6 +12,12 @@ const DEFAULT = {
   kontak_instagram: 'fouracreativee',
   kontak_tiktok: 'fouracreative',
   kontak_wa: '0882-4580-4687',
+  tentang_hero_teks: 'Foura Creative hadir untuk membantu brand fashion lokal tumbuh melalui strategi media sosial yang tepat, konten yang berkualitas, dan pendekatan yang kreatif serta berkelanjutan.',
+  tentang_cerita_judul: 'Berawal dari kecintaan pada fashion dan dunia digital.',
+  tentang_cerita_1: 'Foura Creative didirikan di Makassar oleh sekelompok anak muda yang percaya bahwa setiap brand, sekecil apa pun, layak tampil menarik dan profesional di media sosial.',
+  tentang_cerita_2: 'Kami melihat banyak UMKM fashion di Makassar yang punya produk luar biasa, tapi masih kesulitan mengelola media sosial dan membangun citra brand yang kuat. Dari situlah Foura Creative lahir.',
+  tentang_tim_judul: 'Di balik setiap konten hebat, ada tim yang luar biasa.',
+  tentang_tim_teks: 'Foura Creative terdiri dari mahasiswa yang bekerja sebagai strategist, analyst, dan content creator, dengan semangat membantu brand fashion lokal di Makassar berkembang.',
 };
 
 let siap = null;

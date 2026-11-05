@@ -1,20 +1,66 @@
 <%- include('../partials/header') %>
-<section class="page">
-  <h1>Kelola</h1>
-  <p class="muted">Masuk sebagai <%= LABEL[role] %>.</p>
-  <div class="statistik">
-    <div class="kartu"><b><%= produk %></b>Produk</div>
-    <% if (role === 'admin') { %>
-      <div class="kartu"><b><%= kategori %></b>Kategori</div>
-      <div class="kartu"><b><%= pengguna %></b>Pengguna</div>
-    <% } %>
+
+
+<section class="ka-wrap">
+  <div class="ka-head">
+    <div>
+      <p class="ka-eyebrow">Panel Admin</p>
+      <h1>Kelola Artikel</h1>
+      <p class="ka-sub">Tulis, ubah, dan terbitkan artikel untuk halaman Artikel Foura Creative.</p>
+    </div>
+    <a class="ka-btn" href="/kelola/artikel/baru">+ Tulis Artikel</a>
   </div>
-  <div class="banner-aksi">
-    <a class="btn" href="/kelola/produk">Kelola Produk</a>
-    <% if (role === 'admin') { %>
-      <a class="btn ghost" href="/kelola/kategori">Kelola Kategori</a>
-      <a class="btn ghost" href="/kelola/pengguna">Kelola Pengguna</a>
-    <% } %>
+
+
+  <div class="ka-stats">
+    <div class="ka-stat"><small>Total artikel</small><strong><%= daftar.length %></strong></div>
+    <div class="ka-stat"><small>Terbit</small><strong><%= daftar.filter(a => a.terbit).length %></strong></div>
+    <div class="ka-stat"><small>Draf</small><strong><%= daftar.filter(a => !a.terbit).length %></strong></div>
   </div>
+
+
+  <% if (daftar.length) { %>
+    <div class="ka-list">
+      <% daftar.forEach(a => { %>
+        <% const menit = Math.max(1, Math.round(String(a.isi).split(/\s+/).filter(Boolean).length / 200)); %>
+        <article class="ka-item">
+          <div class="ka-thumb">
+            <% if (a.gambar) { %>
+              <img src="<%= a.gambar %>" alt="">
+            <% } else { %>
+              <span><%= (a.judul || 'A').charAt(0).toUpperCase() %></span>
+            <% } %>
+          </div>
+
+
+          <div class="ka-info">
+            <div class="ka-tags">
+              <% if (a.kategori) { %><span class="ka-kat"><%= a.kategori %></span><% } %>
+              <span class="ka-status <%= a.terbit ? 'ok' : 'draf' %>"><%= a.terbit ? 'Terbit' : 'Draf' %></span>
+            </div>
+            <h3><%= a.judul %></h3>
+            <p class="ka-meta"><%= a.penulis || 'Tim Foura Creative' %> · <%= tanggal(a.createdAt) %> · <%= menit %> menit baca</p>
+          </div>
+
+
+          <div class="ka-aksi">
+            <a class="ka-lihat" href="/artikel/<%= a.slug %>" target="_blank">Lihat</a>
+            <a class="ka-ubah" href="/kelola/artikel/<%= a.id %>/edit">Ubah</a>
+            <form method="POST" action="/kelola/artikel/<%= a.id %>/hapus" onsubmit="return confirm('Hapus artikel ini beserta komentarnya?')">
+              <button type="submit" class="ka-hapus">Hapus</button>
+            </form>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="ka-kosong">
+      <h3>Belum ada artikel</h3>
+      <p>Mulai tulis artikel pertama untuk ditampilkan di halaman Artikel.</p>
+      <a class="ka-btn" href="/kelola/artikel/baru">+ Tulis Artikel</a>
+    </div>
+  <% } %>
 </section>
+
+
 <%- include('../partials/footer') %>

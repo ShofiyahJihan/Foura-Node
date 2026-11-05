@@ -1,0 +1,25 @@
+<%- include('../partials/dash-header', { aktif: 'artikel', judul: 'Kelola Artikel' }) %>
+<section class="page">
+  <div class="bar"><h1>Kelola Artikel</h1><a class="btn" href="/kelola/artikel/baru">+ Tulis Artikel</a></div>
+  <% if (daftar.length) { %>
+  <div class="scroll-x"><table class="tabel">
+    <thead><tr><th>Judul</th><th>Kategori</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr></thead>
+    <tbody>
+    <% daftar.forEach(a => { %>
+      <tr>
+        <td><b><%= a.judul %></b><br><span class="muted">/artikel/<%= a.slug %></span></td>
+        <td><%= a.kategori || '-' %></td>
+        <td class="muted"><%= tanggal(a.createdAt) %></td>
+        <td><%= a.terbit ? 'Terbit' : 'Draf' %></td>
+        <td class="aksi-sel">
+          <a class="btn ghost sm" href="/artikel/<%= a.slug %>">Lihat</a>
+          <a class="btn ghost sm" href="/kelola/artikel/<%= a.id %>/edit">Ubah</a>
+          <form method="post" action="/kelola/artikel/<%= a.id %>/hapus" onsubmit="return confirm('Hapus artikel ini?')"><button class="btn bahaya sm">Hapus</button></form>
+        </td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table></div>
+  <% } else { %><p class="kosong">Belum ada artikel. Klik "Tulis Artikel" untuk membuat yang pertama.</p><% } %>
+</section>
+<%- include('../partials/dash-footer') %>

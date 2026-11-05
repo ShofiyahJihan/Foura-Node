@@ -5,10 +5,12 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
+    "dev": "nodemon --ext js,ejs server.js",
     "setup": "node src/setup.js",
     "seed": "node src/seed.js",
-    "demo": "node src/demo.js"
+    "demo": "node src/demo.js",
+    "db:sinkron": "node src/sinkron.js",
+    "seed:artikel": "node src/seed-artikel.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -22,5 +24,11 @@
   },
   "allowScripts": {
     "sqlite3@5.1.7": true
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
+
+
+

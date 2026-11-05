@@ -1,4 +1,4 @@
-<%- include('../partials/header') %>
+<%- include('../partials/dash-header', { aktif: 'artikel', judul: 'Kelola Kategori' }) %>
 <section class="form-wrap wide">
   <h1><%= kat ? 'Ubah Kategori' : 'Tambah Kategori' %></h1>
   <% if (error) { %><p class="err"><%= error %></p><% } %>
@@ -13,4 +13,4 @@
   </form>
   <p><a href="/kelola/kategori">← Kembali</a></p>
 </section>
-<%- include('../partials/footer') %>
+<%- include('../partials/dash-footer') %>

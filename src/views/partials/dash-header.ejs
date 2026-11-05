@@ -1,0 +1,63 @@
+<%
+  const u = locals.user || null;
+  const role = locals.role || '';
+  const nama = (u && (u.first_name || u.username)) || '';
+  const inisial = (nama || '?').charAt(0).toUpperCase();
+  const peran = (locals.LABEL && LABEL[role]) || '';
+  const isAdmin = !!role && !['klien', 'pelanggan', 'costumer', 'customer'].includes(role);
+  const p = locals.path || '';
+  const on = h => (h === '/dashboard' ? p === h : p.startsWith(h)) ? 'on' : '';
+%>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= locals.judul || 'Dashboard' %> — Foura Creative</title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="d-app">
+
+  <aside class="d-side">
+    <a href="/" class="d-brand">
+      <img src="/images/logo.png" alt="Logo Foura Creative">
+      <div><b>Foura Creative</b><small>Create, Connect, Grow</small></div>
+    </a>
+    <nav class="d-menu">
+      <a href="/dashboard" class="<%= on('/dashboard') %>"><span>▦</span> Dashboard</a>
+      <% if (isAdmin) { %>
+        <a href="/admin/pesanan" class="<%= on('/admin/pesanan') %>"><span>◈</span> Kelola Pesanan</a>
+        <a href="/kelola/produk" class="<%= on('/kelola/produk') %>"><span>▣</span> Kelola Katalog</a>
+        <a href="/kelola/kategori" class="<%= on('/kelola/kategori') %>"><span>☰</span> Kelola Kategori</a>
+        <% if (role === 'admin') { %>
+          <a href="/kelola/pengguna" class="<%= on('/kelola/pengguna') %>"><span>☺</span> Kelola Pengguna</a>
+          <a href="/kelola/artikel" class="<%= on('/kelola/artikel') %>"><span>✎</span> Kelola Artikel</a>
+          <a href="/kelola/tentang" class="<%= on('/kelola/tentang') %>"><span>ⓘ</span> Kelola Tentang Kami</a>
+        <% } %>
+      <% } else { %>
+        <a href="/riwayat" class="<%= on('/riwayat') %>"><span>☰</span> Riwayat Pesanan</a>
+        <a href="/profil" class="<%= on('/profil') %>"><span>☺</span> Profil Pengguna</a>
+      <% } %>
+      <button type="button" id="btnKeluar"><span>⇥</span> Keluar</button>
+    </nav>
+    <p class="d-quote">More Views<br>More Customers</p>
+  </aside>
+
+  <main class="d-main">
+    <header class="d-top">
+      <div class="d-search">
+        <input type="search" placeholder="<%= isAdmin ? 'Cari produk, pelanggan, atau pesanan...' : 'Cari pesanan, layanan, atau informasi...' %>">
+      </div>
+      <div class="d-user">
+        <span class="d-bell" title="Notifikasi">🔔</span>
+        <div class="d-chip">
+          <% if (locals.fotoUser) { %><img class="d-ava d-ava-img" src="<%= fotoUser %>" alt=""><% } else { %><span class="d-ava"><%= inisial %></span><% } %>
+          <div><b><%= nama %></b><small><%= peran %></small></div>
+          <span class="d-caret">▾</span>
+        </div>
+      </div>
+    </header>

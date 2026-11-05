@@ -1,20 +1,76 @@
 <%- include('partials/header') %>
-<section class="page">
-  <p class="muted"><a href="/katalog">← Katalog</a> / <a href="/katalog?kategori=<%= produk.category.id %>"><%= produk.category.name_kategori %></a></p>
-  <div class="detail">
-    <div>
-      <div class="utama"><% if (produk.image) { %><img src="/uploads/<%= produk.image %>" alt="<%= produk.name %>"><% } else { %><%= produk.name.charAt(0).toUpperCase() %><% } %></div>
-      <% if (produk.gambar_tambahan.length) { %>
-        <div class="galeri"><% produk.gambar_tambahan.forEach(m => { %><a href="/uploads/<%= m.file %>" target="_blank" rel="noopener"><img src="/uploads/<%= m.file %>" alt="Gambar tambahan <%= produk.name %>"></a><% }) %></div>
+
+<%
+const gambar = produk.image ? '/uploads/' + produk.image : (meta.gambar || '');
+const wa = String(S.kontak_wa || '').replace(/\D/g, '').replace(/^0/, '62');
+const pesanWa = encodeURIComponent('Halo Foura Creative, saya tertarik dengan ' + produk.name + '. Boleh minta info lebih lanjut?');
+%>
+
+<section class="pd-wrap">
+  <p class="pd-crumb">
+    <a href="/katalog">Katalog</a> <span>/</span>
+    <% if (produk.category) { %><a href="/katalog?kategori=<%= produk.category.id %>"><%= produk.category.name_kategori %></a> <span>/</span><% } %>
+    <b><%= produk.name %></b>
+  </p>
+
+  <div class="pd-grid">
+    <!-- Kiri: foto -->
+    <div class="pd-media">
+      <div class="pd-foto">
+        <% if (gambar) { %>
+          <img src="<%= gambar %>" alt="<%= produk.name %>">
+        <% } else { %>
+          <span><%= produk.name.charAt(0).toUpperCase() %></span>
+        <% } %>
+        <% if (meta.populer) { %><em class="pd-label">Paling Populer</em><% } %>
+      </div>
+      <% if (produk.gambar_tambahan && produk.gambar_tambahan.length) { %>
+        <div class="pd-galeri">
+          <% produk.gambar_tambahan.forEach(m => { %>
+            <a href="/uploads/<%= m.file %>" target="_blank" rel="noopener"><img src="/uploads/<%= m.file %>" alt="Gambar tambahan <%= produk.name %>"></a>
+          <% }) %>
+        </div>
       <% } %>
     </div>
-    <div>
-      <span class="tag"><%= produk.category.name_kategori %></span>
+
+    <!-- Kanan: info -->
+    <div class="pd-info">
+      <% if (produk.category) { %><span class="pd-tag"><%= produk.category.name_kategori %></span><% } %>
       <h1><%= produk.name %></h1>
-      <p class="harga"><%= rupiah(produk.price) %></p>
-      <% if (produk.deskripsi) { %><p class="deskripsi"><%= produk.deskripsi %></p><% } else { %><p class="muted">Belum ada deskripsi.</p><% } %>
-      <% if (role === 'admin'') { %><p><a class="btn ghost" href="/kelola/produk/<%= produk.id %>/edit">Ubah produk</a></p><% } %>
+
+      <p class="pd-harga">
+        <%= rupiah(produk.price) %>
+        <% if (meta.satuan) { %><small>/ <%= meta.satuan %></small><% } %>
+      </p>
+
+      <% if (produk.deskripsi) { %><p class="pd-desk"><%= produk.deskripsi %></p><% } %>
+
+      <% if (meta.fitur && meta.fitur.length) { %>
+        <div class="pd-kotak">
+          <h3>Yang kamu dapatkan</h3>
+          <ul class="pd-fitur">
+            <% meta.fitur.forEach(f => { %><li><%= f %></li><% }) %>
+          </ul>
+        </div>
+      <% } %>
+
+      <% if (meta.waktu || meta.catatan) { %>
+        <div class="pd-catatan">
+          <% if (meta.waktu) { %><p><b>Waktu pengerjaan:</b> <%= meta.waktu %></p><% } %>
+          <% if (meta.catatan) { %><p><b>Catatan:</b> <%= meta.catatan %></p><% } %>
+        </div>
+      <% } %>
+
+      <div class="pd-aksi">
+        <a class="pd-btn" href="https://wa.me/<%= wa %>?text=<%= pesanWa %>" target="_blank" rel="noopener">Tanya via WhatsApp</a>
+        <a class="pd-btn pd-btn-ghost" href="/katalog">Lihat Layanan Lain</a>
+      </div>
+
+      <% if (role === 'admin') { %>
+        <p class="pd-admin"><a href="/kelola/produk/<%= produk.id %>/edit">Ubah produk</a></p>
+      <% } %>
     </div>
   </div>
 </section>
+
 <%- include('partials/footer') %>

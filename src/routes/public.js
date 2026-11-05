@@ -137,7 +137,8 @@ router.get('/produk/:id', async (req, res, next) => {
       include: [{ model: CategoryProduct, as: 'category' }, { model: MediaFile, as: 'gambar_tambahan' }],
     });
     if (!produk) return next();
-    res.render('produk', { title: produk.name, produk });
+    const meta = META[norm(produk.name)] || {};
+    res.render('produk', { title: produk.name, produk, meta });
   } catch (e) { next(e); }
 });
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 05, 2026 at 09:30 AM
+-- Generation Time: Nov 05, 2026 at 02:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,6 +41,15 @@ CREATE TABLE `artikel` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `artikel`
+--
+
+INSERT INTO `artikel` (`id`, `judul`, `slug`, `ringkasan`, `isi`, `kategori`, `gambar`, `penulis`, `penulis_foto`, `terbit`, `created_at`, `updated_at`) VALUES
+(1, '5 Tips Membuat Konten Instagram yang Menarik untuk UMKM Fashion', '5-tips-konten-instagram-umkm-fashion', 'Foto bagus saja belum cukup. Ini lima langkah sederhana supaya feed Instagram brand fashion kamu terlihat rapi dan membuat orang mau berhenti menggulir.', 'Instagram sering menjadi tempat pertama calon pembeli mengenal sebuah brand fashion. Karena itu, tampilan akun kamu perlu memberi kesan yang jelas dalam beberapa detik.\n\n\n## 1. Tentukan satu gaya visual\nPilih beberapa warna utama dan satu jenis pencahayaan, lalu pakai terus. Feed yang punya gaya konsisten lebih mudah diingat dibanding feed yang berganti-ganti tampilan.\n\n\n## 2. Foto produk dengan cahaya alami\nCahaya dekat jendela di pagi atau sore hari sudah cukup untuk hasil yang bersih. Hindari lampu kamar yang membuat warna kain tampak berbeda dari aslinya.\n\n\n## 3. Campurkan jenis konten\nJangan hanya menampilkan foto produk. Selingi dengan:\n- Video singkat cara memadukan pakaian\n- Cerita di balik proses pembuatan\n- Testimoni pelanggan\n- Promo atau info stok terbaru\n\n\n## 4. Tulis keterangan yang mengajak\nAkhiri keterangan foto dengan ajakan sederhana, misalnya bertanya warna favorit atau mengarahkan ke tautan pemesanan. Ajakan yang jelas membuat orang lebih mudah mengambil langkah berikutnya.\n\n\n## 5. Cek hasilnya secara berkala\nLihat konten mana yang paling banyak disimpan dan dibagikan, lalu buat lebih banyak yang serupa. Dari situ kamu belajar selera audiensmu sendiri.', 'Tips Konten', NULL, 'Tim Foura Creative', NULL, 1, '2026-11-05 12:50:17', '2026-11-05 12:50:17'),
+(2, 'Kenapa Jadwal Posting yang Konsisten Itu Penting', 'kenapa-jadwal-posting-konsisten-itu-penting', 'Akun yang aktif tidak teratur membuat pengikut lupa. Pelajari cara menyusun jadwal posting yang realistis dan mudah dijalankan.', 'Banyak pemilik usaha memposting banyak sekali saat sedang semangat, lalu menghilang berminggu-minggu karena sibuk melayani pesanan. Pola seperti ini membuat akun terasa tidak terurus.\n\n\n## Konsisten lebih penting daripada sering\nLebih baik memposting tiga kali seminggu secara rutin daripada sepuluh kali dalam satu minggu lalu berhenti. Pengikut jadi tahu kapan harus menunggu konten barumu.\n\n\n## Cara menyusun jadwal yang realistis\n- Hitung dulu waktu yang benar-benar kamu punya setiap minggu\n- Tentukan hari dan jam tetap untuk memposting\n- Siapkan konten untuk satu minggu sekaligus, jangan satu per satu\n- Pakai fitur penjadwalan agar posting tetap tayang saat kamu sibuk\n\n\n## Sesuaikan dengan kebiasaan audiens\nPerhatikan jam ketika pengikutmu paling aktif, lalu pilih waktu posting di sekitar jam itu. Data ini biasanya tersedia di menu statistik akun.\n\n\nDengan jadwal yang rapi, kamu bisa fokus pada hal lain tanpa takut akun terbengkalai.', 'Strategi', NULL, 'Tim Foura Creative', NULL, 1, '2026-11-05 12:50:17', '2026-11-05 12:50:17'),
+(3, 'Cara Membaca Laporan Performa Media Sosial untuk Pemula', 'cara-membaca-laporan-performa-media-sosial', 'Laporan performa terlihat rumit? Cukup pahami beberapa angka utama ini untuk tahu apakah strategi media sosialmu berjalan baik.', 'Laporan performa membantu kamu menjawab satu pertanyaan penting: apakah usaha di media sosial sudah membawa hasil? Kamu tidak perlu memahami semua angka, cukup mulai dari yang paling berguna.\n\n\n## Jangkauan (reach)\nJumlah akun berbeda yang melihat kontenmu. Angka ini menunjukkan seberapa luas brand kamu dikenal.\n\n\n## Interaksi (engagement)\nTotal suka, komentar, simpan, dan bagikan pada kontenmu. Interaksi yang tinggi berarti konten benar-benar menarik bagi audiens, bukan sekadar terlihat.\n\n\n## Klik ke tautan atau profil\nAngka ini menunjukkan berapa banyak orang yang tertarik mencari tahu lebih jauh tentang produkmu. Ini sering menjadi tanda awal calon pembeli.\n\n\n## Cara memakai angka-angka ini\n- Bandingkan dengan bulan sebelumnya, bukan dengan akun lain\n- Cari konten dengan angka tertinggi, lalu pelajari kesamaannya\n- Tentukan satu target kecil untuk bulan berikutnya\n\n\nLaporan yang dibaca secara rutin akan membantumu mengambil keputusan konten berdasarkan data, bukan tebakan.', 'Analitik', NULL, 'Tim Foura Creative', NULL, 1, '2026-11-05 12:50:17', '2026-11-05 12:50:17');
 
 -- --------------------------------------------------------
 
@@ -97,7 +106,8 @@ CREATE TABLE `auth_user` (
 INSERT INTO `auth_user` (`id`, `username`, `password`, `first_name`, `last_name`, `email`, `created_at`, `updated_at`) VALUES
 (1, 'admin', '$2a$10$L2inVNtZ4.wr3/ruEZ9hF.zjJ1aJq5CFoTbGPuVgQeZfiWbBhaFJi', 'Admin Foura', '', 'admin@foura.test', '2026-10-18 21:27:57', '2026-10-18 21:27:57'),
 (3, 'budi', '$2a$10$pbyrqcLcZzk8QzVRATWQZONbURak3t.mCTFdFCdJ8nPGSWfnkjKmG', 'Budi', '', 'budi@foura.test', '2026-10-18 21:27:57', '2026-10-18 21:27:57'),
-(4, 'shofiyah', '$2a$10$2wqHwlHO0q2zSLOkr0T8leVdKYO68czHGSev0ByX5t99ghuo2Ry.W', 'Shofiyah Jihan', 'Aulia', 'shofiyahjihanauliaanwar@gmail.com', '2026-10-28 23:52:55', '2026-11-02 06:51:43');
+(4, 'shofiyah', '$2a$10$2wqHwlHO0q2zSLOkr0T8leVdKYO68czHGSev0ByX5t99ghuo2Ry.W', 'Shofiyah Jihan', 'Aulia', 'shofiyahjihanauliaanwar@gmail.com', '2026-10-28 23:52:55', '2026-11-02 06:51:43'),
+(5, 'jeeanrin', '$2a$10$F3FxP/QOKreAmkARnLwlvulH5tTvr2df8bqF8TflzVoRfz8UiWIsq', 'jeeanrin', '', '', '2026-11-05 12:24:55', '2026-11-05 12:24:55');
 
 -- --------------------------------------------------------
 
@@ -324,24 +334,24 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`id`, `name`, `deskripsi`, `price`, `image`, `created_at`, `updated_at`, `category_id`) VALUES
-(1, 'Paket Basic', 'Cocok untuk bisnis yang baru memulai.', 500000.00, 'product_images/1426e4704cd734a8486ada1f.jpg', '2026-10-18 21:27:57', '2026-11-05 07:45:17', 1),
-(2, 'Paket Pro', 'Untuk bisnis yang ingin lebih berkembang.', 1100000.00, 'product_images/737143b3dae35f9d1408ec63.jpg', '2026-10-18 21:27:57', '2026-11-05 07:45:17', 1),
-(3, 'Paket Premium', 'Untuk brand yang ingin hasil maksimal.', 2000000.00, 'product_images/46945e7cc22ae5dfa749b045.jpg', '2026-10-18 21:27:57', '2026-11-05 07:45:17', 1),
-(14, 'Konten Feed Instagram', 'Desain feed Instagram yang rapi dan sesuai karakter brand.', 35000.00, 'product_images/0e81b3ee556980f6db0ab6de.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 2),
-(15, 'Konten Video TikTok', 'Video pendek untuk meningkatkan engagement.', 45000.00, 'product_images/185fbef42347d41e45eeda91.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 2),
-(16, 'Sesi Foto Produk Profesional', 'Foto produk berkualitas tinggi dan estetik.', 350000.00, 'product_images/9eedf61f7a336580a1403cab.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 2),
-(17, 'Video Promosi Produk', 'Video promosi untuk menampilkan produk secara menarik.', 150000.00, 'product_images/9365cd96ac3e9c465a2b8bf9.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 2),
-(18, 'Desain Konten Promo Musiman', 'Desain promosi untuk momen spesial.', 200000.00, 'product_images/6b688d34874fe9f0b417db31.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 2),
-(19, 'Kelola Instagram', 'Pengelolaan akun Instagram secara rutin.', 130000.00, 'product_images/c9b501f8af729061e6832e7a.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
-(20, 'Kelola TikTok', 'Pengelolaan akun TikTok secara rutin.', 130000.00, 'product_images/45f5f151295c810757bbfe13.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
-(21, 'Jadwal Posting Instagram', 'Penjadwalan posting Instagram agar konsisten.', 45000.00, 'product_images/2b1e554d650cbd586cc24f74.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
-(22, 'Jadwal Posting TikTok', 'Penjadwalan posting TikTok agar konsisten.', 45000.00, 'product_images/96b0a2f07aad1b8579ff62cb.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
-(23, 'Setup Awal Akun', 'Penyiapan akun media sosial dari awal.', 200000.00, 'product_images/4ab5b378750c634a08c7cf67.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
-(24, 'Riset & Strategi Konten Bulanan', 'Riset tren dan rencana konten untuk satu bulan.', 150000.00, 'product_images/5215b7ce0feb5cb827c4efff.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 3),
-(25, 'Laporan Performa Sederhana', 'Ringkasan performa akun media sosial.', 75000.00, 'product_images/dbcae3476334c01172711ebd.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 4),
-(26, 'Laporan Performa Detail', 'Analisis performa akun yang lebih mendalam.', 175000.00, 'product_images/f7050540a87c0ed8a64c3cee.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 4),
-(27, 'Sesi Konsultasi Strategi', 'Diskusi strategi konten bersama tim kami.', 100000.00, 'product_images/ed88427327eb5847de439c9b.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 4),
-(28, 'Paket Konsultasi Rutin', 'Konsultasi berkala untuk menjaga arah strategi.', 180000.00, 'product_images/fecbc644ad6a890b4b6bfa13.jpg', '2026-10-18 21:28:12', '2026-11-05 07:45:17', 4);
+(1, 'Paket Basic', 'Cocok untuk bisnis yang baru memulai.', 500000.00, 'product_images/1426e4704cd734a8486ada1f.jpg', '2026-10-18 21:27:57', '2026-11-05 12:59:39', 1),
+(2, 'Paket Pro', 'Untuk bisnis yang ingin lebih berkembang.', 1100000.00, 'product_images/737143b3dae35f9d1408ec63.jpg', '2026-10-18 21:27:57', '2026-11-05 12:59:39', 1),
+(3, 'Paket Premium', 'Untuk brand yang ingin hasil maksimal.', 2000000.00, 'product_images/46945e7cc22ae5dfa749b045.jpg', '2026-10-18 21:27:57', '2026-11-05 12:59:39', 1),
+(14, 'Konten Feed Instagram', 'Desain feed Instagram yang rapi dan sesuai karakter brand.', 35000.00, 'product_images/0e81b3ee556980f6db0ab6de.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 2),
+(15, 'Konten Video TikTok', 'Video pendek untuk meningkatkan engagement.', 45000.00, 'product_images/185fbef42347d41e45eeda91.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 2),
+(16, 'Sesi Foto Produk Profesional', 'Foto produk berkualitas tinggi dan estetik.', 350000.00, 'product_images/9eedf61f7a336580a1403cab.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 2),
+(17, 'Video Promosi Produk', 'Video promosi untuk menampilkan produk secara menarik.', 150000.00, 'product_images/9365cd96ac3e9c465a2b8bf9.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 2),
+(18, 'Desain Konten Promo Musiman', 'Desain promosi untuk momen spesial.', 200000.00, 'product_images/6b688d34874fe9f0b417db31.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 2),
+(19, 'Kelola Instagram', 'Pengelolaan akun Instagram secara rutin.', 130000.00, 'product_images/c9b501f8af729061e6832e7a.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 3),
+(20, 'Kelola TikTok', 'Pengelolaan akun TikTok secara rutin.', 130000.00, 'product_images/45f5f151295c810757bbfe13.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 3),
+(21, 'Jadwal Posting Instagram', 'Penjadwalan posting Instagram agar konsisten.', 45000.00, 'product_images/2b1e554d650cbd586cc24f74.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 3),
+(22, 'Jadwal Posting TikTok', 'Penjadwalan posting TikTok agar konsisten.', 45000.00, 'product_images/96b0a2f07aad1b8579ff62cb.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 3),
+(23, 'Setup Awal Akun', 'Penyiapan akun media sosial dari awal.', 200000.00, 'product_images/4ab5b378750c634a08c7cf67.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 3),
+(24, 'Riset & Strategi Konten Bulanan', 'Riset tren dan rencana konten untuk satu bulan.', 150000.00, 'product_images/5215b7ce0feb5cb827c4efff.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 3),
+(25, 'Laporan Performa Sederhana', 'Ringkasan performa akun media sosial.', 75000.00, 'product_images/dbcae3476334c01172711ebd.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 4),
+(26, 'Laporan Performa Detail', 'Analisis performa akun yang lebih mendalam.', 175000.00, 'product_images/f7050540a87c0ed8a64c3cee.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 4),
+(27, 'Sesi Konsultasi Strategi', 'Diskusi strategi konten bersama tim kami.', 100000.00, 'product_images/ed88427327eb5847de439c9b.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 4),
+(28, 'Paket Konsultasi Rutin', 'Konsultasi berkala untuk menjaga arah strategi.', 180000.00, 'product_images/fecbc644ad6a890b4b6bfa13.jpg', '2026-10-18 21:28:12', '2026-11-05 12:59:39', 4);
 
 -- --------------------------------------------------------
 
@@ -473,7 +483,8 @@ CREATE TABLE `user_costumer` (
 
 INSERT INTO `user_costumer` (`id`, `alamat`, `no_hp`, `created_at`, `updated_at`, `user_id`, `nama_umkm`, `foto`) VALUES
 (2, '-', '082293658120', '2026-10-28 23:52:55', '2026-11-02 06:51:43', 4, 'Butik', '/uploads/profil/u4-1793419110971.jpg'),
-(3, NULL, NULL, '2026-11-04 05:58:41', '2026-11-04 05:58:41', 3, NULL, NULL);
+(3, NULL, NULL, '2026-11-04 05:58:41', '2026-11-04 05:58:41', 3, NULL, NULL),
+(4, NULL, NULL, '2026-11-05 12:24:55', '2026-11-05 12:24:55', 5, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -605,7 +616,7 @@ ALTER TABLE `user_costumer`
 -- AUTO_INCREMENT for table `artikel`
 --
 ALTER TABLE `artikel`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `artikel_komentar`
@@ -623,13 +634,13 @@ ALTER TABLE `artikel_reaksi`
 -- AUTO_INCREMENT for table `auth_user`
 --
 ALTER TABLE `auth_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `category_product`
 --
 ALTER TABLE `category_product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `kebijakan_bagian`
@@ -695,7 +706,7 @@ ALTER TABLE `user_admin`
 -- AUTO_INCREMENT for table `user_costumer`
 --
 ALTER TABLE `user_costumer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

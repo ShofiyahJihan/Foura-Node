@@ -1,9 +1,28 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/artikel-detail.css">
 
+<style>
+  /* Tombol aksi (suka & komentar) */
+  .aksi-bar { display: flex; align-items: center; gap: 12px; }
+  .aksi-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border: 0; border-radius: 999px;
+    background: transparent; color: #6b1f3a;
+    font: inherit; font-size: 1.05rem; line-height: 1;
+    cursor: pointer; text-decoration: none;
+    transition: background .15s, transform .1s;
+  }
+  .aksi-btn:hover { background: rgba(107, 31, 58, .08); }
+  .aksi-btn:active { transform: scale(.96); }
+  .aksi-btn:disabled { opacity: .6; cursor: wait; }
+  .aksi-btn svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s, fill .15s; }
+  .aksi-btn.suka.aktif { background: rgba(107, 31, 58, .1); }
+  .aksi-btn.suka.aktif svg { fill: currentColor; }
+  .aksi-btn.suka.pop svg { animation: pop .3s ease; }
+  @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.35); } 100% { transform: scale(1); } }
+</style>
 
 <article class="dt-wrap">
-
 
   <header class="dt-kepala">
     <% if (!a.terbit) { %>
@@ -13,7 +32,6 @@
       <a class="dt-badge" href="/artikel?kategori=<%= encodeURIComponent(a.kategori) %>"><%= a.kategori %></a>
     <% } %>
     <h1 class="dt-judul"><%= a.judul %></h1>
-
 
     <div class="dt-penulis">
       <% if (a.penulisFoto) { %>
@@ -26,23 +44,39 @@
     </div>
   </header>
 
-
   <% if (a.gambar) { %>
     <img class="dt-sampul" src="<%= a.gambar %>" alt="<%= a.judul %>">
   <% } %>
 
-
   <div class="dt-layout">
-
 
     <!-- KIRI -->
     <div class="dt-utama">
 
-
       <div class="dt-bar">
-        <%- include('aksi') %>
-      </div>
+        <div class="aksi-bar">
+          <!-- Tombol love -->
+          <button type="button"
+                  class="aksi-btn suka <%= a.sukaAktif ? 'aktif' : '' %>"
+                  data-slug="<%= a.slug %>"
+                  data-jenis="suka"
+                  aria-pressed="<%= a.sukaAktif ? 'true' : 'false' %>"
+                  aria-label="Suka artikel ini">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>
+            </svg>
+            <span class="jumlah"><%= a.suka %></span>
+          </button>
 
+          <!-- Tombol komentar (menggulir ke bagian komentar) -->
+          <a class="aksi-btn" href="#komentar" aria-label="Lihat komentar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.1A8.4 8.4 0 1 1 21 11.5z"/>
+            </svg>
+            <span><%= komentar.length %></span>
+          </a>
+        </div>
+      </div>
 
       <div class="dt-teks">
         <% a.isi.forEach(b => { %>
@@ -56,10 +90,8 @@
         <% }) %>
       </div>
 
-
       <section class="dt-kom" id="komentar">
         <h3>Komentar (<%= komentar.length %>)</h3>
-
 
         <% if (login) { %>
           <form class="dt-kom-form" method="POST" action="/artikel/<%= a.slug %>/komentar">
@@ -69,7 +101,6 @@
         <% } else { %>
           <p class="dt-kom-info">Masuk untuk menulis komentar.</p>
         <% } %>
-
 
         <% komentar.forEach(k => { %>
           <div class="dt-kom-item">
@@ -87,7 +118,6 @@
         <% }) %>
       </section>
     </div>
-
 
     <!-- KANAN -->
     <aside class="dt-samping">
@@ -107,7 +137,6 @@
         <div class="dt-tgl"><%= a.tanggal %></div>
       </div>
 
-
       <div class="dt-cta">
         <h3>Butuh bantuan mengelola media sosial brand kamu?</h3>
         <p>Lihat paket dan layanan Foura Creative.</p>
@@ -116,7 +145,6 @@
     </aside>
   </div>
 </article>
-
 
 <% if (lain.length) { %>
 <section class="dt-lain">
@@ -143,6 +171,32 @@
 </section>
 <% } %>
 
+<script>
+  // Tombol love: kirim ke server, lalu perbarui tampilan tanpa reload
+  document.addEventListener('click', async function (e) {
+    var tombol = e.target.closest('.aksi-btn[data-jenis]');
+    if (!tombol) return;
+    tombol.disabled = true;
+    try {
+      var res = await fetch(
+        '/artikel/' + encodeURIComponent(tombol.dataset.slug) + '/reaksi/' + tombol.dataset.jenis,
+        { method: 'POST', headers: { 'Accept': 'application/json' }, credentials: 'same-origin' }
+      );
+      var data = await res.json();
+      if (res.status === 401) { window.location.href = data.login || '/masuk'; return; }
+      if (!res.ok) throw new Error('gagal');
+
+      tombol.classList.toggle('aktif', data.aktif);
+      tombol.setAttribute('aria-pressed', data.aktif ? 'true' : 'false');
+      tombol.querySelector('.jumlah').textContent = data.jumlah;
+      tombol.classList.remove('pop'); void tombol.offsetWidth; tombol.classList.add('pop');
+    } catch (err) {
+      alert('Gagal memproses, coba lagi.');
+    } finally {
+      tombol.disabled = false;
+    }
+  });
+</script>
 
 <%- include('../partials/footer') %>
 

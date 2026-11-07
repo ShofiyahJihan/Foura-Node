@@ -1,4 +1,4 @@
-const { TentangItem, TentangTeks } = require('../models/tentang');
+const { TentangItem, TentangTeks, TentangGambar } = require('../models/tentang');
 
 const DEFAULT_TEKS = {
   hero_judul:    'Kami adalah partner kreatif untuk UMKM fashion di Makassar.',
@@ -39,12 +39,16 @@ const DEFAULT = {
   ],
 };
 
+// Kunci teks yang berisi gambar (bisa diunggah dari admin)
+const KUNCI_GAMBAR = ['hero_gambar', 'cerita_gambar', 'nilai_gambar'];
+
 let siap = null;
 function siapkan() {
   if (!siap) {
     siap = (async () => {
       await TentangItem.sync();
       await TentangTeks.sync();
+      await TentangGambar.sync();
       if (await TentangItem.count() === 0) {
         for (const [jenis, daftar] of Object.entries(DEFAULT)) {
           for (let i = 0; i < daftar.length; i++) {
@@ -61,6 +65,20 @@ function siapkan() {
   return siap;
 }
 
+/* ---------- gambar di database ---------- */
+// Alamat gambar; ?v= supaya browser memuat ulang saat gambar diganti
+const urlGambar = kunci => `/kelola/tentang/gambar/${encodeURIComponent(kunci)}?v=${Date.now()}`;
+
+async function simpanGambar(kunci, file) {
+  const ada = await TentangGambar.findOne({ where: { kunci } });
+  if (ada) await ada.update({ mime: file.mimetype, data: file.buffer });
+  else await TentangGambar.create({ kunci, mime: file.mimetype, data: file.buffer });
+}
+async function ambilGambar(kunci) {
+  await siapkan();
+  return TentangGambar.findOne({ where: { kunci } });
+}
+
 // { keunggulan: [...], tim: [...], nilai: [...], teks: { hero_judul: '...', ... } }
 async function ambilTentang() {
   await siapkan();
@@ -75,8 +93,24 @@ async function ambilTentang() {
 async function simpanTeks(body) {
   await siapkan();
   for (const kunci of Object.keys(DEFAULT_TEKS)) {
+    if (KUNCI_GAMBAR.includes(kunci)) continue; // gambar diurus terpisah
     if (typeof body[kunci] === 'string') {
       await TentangTeks.update({ nilai: body[kunci].trim() }, { where: { kunci } });
+    }
+  }
+}
+
+// Gambar hero / cerita / nilai: file baru disimpan, atau dikembalikan ke bawaan kalau dihapus
+async function simpanGambarTeks(files, body) {
+  await siapkan();
+  for (const k of KUNCI_GAMBAR) {
+    const file = files && files[k + '_file'] && files[k + '_file'][0];
+    if (file) {
+      await simpanGambar('teks-' + k, file);
+      await TentangTeks.update({ nilai: urlGambar('teks-' + k) }, { where: { kunci: k } });
+    } else if (body['hapus_' + k]) {
+      await TentangGambar.destroy({ where: { kunci: 'teks-' + k } });
+      await TentangTeks.update({ nilai: DEFAULT_TEKS[k] }, { where: { kunci: k } });
     }
   }
 }
@@ -90,22 +124,43 @@ const ambilField = b => ({
   urutan: parseInt(b.urutan, 10) || 0,
 });
 
-async function tambahItem(jenis, b) {
+async function tambahItem(jenis, b, file = null) {
   await siapkan();
   if (!JENIS.includes(jenis)) return;
   const f = ambilField(b);
   if (!f.judul) return;
-  await TentangItem.create({ jenis, ...f });
+  const item = await TentangItem.create({ jenis, ...f });
+  if (file) {
+    const kunci = 'item-' + item.id;
+    await simpanGambar(kunci, file);
+    await item.update({ foto: urlGambar(kunci) });
+  }
 }
-async function ubahItem(id, b) {
+
+async function ubahItem(id, b, file = null) {
   await siapkan();
   const f = ambilField(b);
   if (!f.judul) return;
-  await TentangItem.update(f, { where: { id } });
+  const item = await TentangItem.findByPk(id);
+  if (!item) return;
+  const kunci = 'item-' + id;
+  if (file) {
+    await simpanGambar(kunci, file);
+    f.foto = urlGambar(kunci);
+  } else if (b.hapus_foto) {
+    await TentangGambar.destroy({ where: { kunci } });
+    f.foto = null;
+  }
+  await item.update(f);
 }
+
 async function hapusItem(id) {
   await siapkan();
+  await TentangGambar.destroy({ where: { kunci: 'item-' + id } });
   await TentangItem.destroy({ where: { id } });
 }
 
-module.exports = { DEFAULT, DEFAULT_TEKS, siapkan, ambilTentang, simpanTeks, tambahItem, ubahItem, hapusItem };
+module.exports = {
+  DEFAULT, DEFAULT_TEKS, siapkan, ambilTentang, simpanTeks, simpanGambarTeks,
+  tambahItem, ubahItem, hapusItem, ambilGambar,
+};

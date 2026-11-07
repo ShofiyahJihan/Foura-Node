@@ -32,25 +32,58 @@
 
     <div class="aksi">
       <% if (typeof user !== 'undefined' && user) { %>
-      <% if (role === 'customer') { %>
-  <a href="/keranjang" class="nav-cart">Keranjang<% if (typeof jumlahKeranjang !== 'undefined' && jumlahKeranjang > 0) { %> <span class="nav-cart-n"><%= jumlahKeranjang %></span><% } %></a>
-<% } %>
-    <a href="/dashboard" class="nav-avatar" title="Dashboard">
-    <% if (typeof fotoUser !== 'undefined' && fotoUser) { %>
-      <img src="<%= fotoUser %>" alt="Foto profil">
-    <% } else { %>
-      <%= String(user.first_name || user.username || 'U').charAt(0).toUpperCase() %>
-    <% } %>
-  </a>
-<% } else { %>
-  <a class="btn-outline" href="/masuk">Masuk</a>
-  <a class="btn-solid" href="/daftar">Daftar</a>
-<% } %>
+
+
+        <% if (role === 'customer') { %>
+          <% const jml = (typeof jumlahKeranjang !== 'undefined' && jumlahKeranjang) ? Number(jumlahKeranjang) : 0; %>
+          <a href="/keranjang" class="nav-cart" aria-label="Keranjang" title="Keranjang">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 4h2.2l2.1 10.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L20.5 8H6.1"/>
+              <circle cx="9.5" cy="19.5" r="1.4"/>
+              <circle cx="17" cy="19.5" r="1.4"/>
+            </svg>
+            <span class="nav-cart-badge" id="navCartBadge" <%= jml > 0 ? '' : 'hidden' %>><%= jml > 99 ? '99+' : jml %></span>
+          </a>
+        <% } %>
+
+
+        <a href="/dashboard" class="nav-avatar" title="Dashboard">
+          <% if (typeof fotoUser !== 'undefined' && fotoUser) { %>
+            <img src="<%= fotoUser %>" alt="Foto profil">
+          <% } else { %>
+            <%= String(user.first_name || user.username || 'U').charAt(0).toUpperCase() %>
+          <% } %>
+        </a>
+
+
+      <% } else { %>
+        <a class="btn-outline" href="/masuk">Masuk</a>
+        <a class="btn-solid" href="/daftar">Daftar</a>
+      <% } %>
     </div>
 
 
   </div>
 </header>
+
+
+<script>
+  // Perbarui angka badge keranjang tanpa refresh
+  window.updateCartBadge = function (jumlah) {
+    var badge = document.getElementById('navCartBadge');
+    if (!badge) return;
+    jumlah = Number(jumlah) || 0;
+    badge.textContent = jumlah > 99 ? '99+' : jumlah;
+    badge.hidden = jumlah <= 0;
+  };
+
+
+  // Alternatif: cukup kirim event dari file JS mana pun
+  // document.dispatchEvent(new CustomEvent('keranjang:update', { detail: { jumlah: 3 } }));
+  document.addEventListener('keranjang:update', function (e) {
+    window.updateCartBadge(e.detail && e.detail.jumlah);
+  });
+</script>
 
 
 <% if (flash) { %><div class="pesan"><p class="<%= flash.type %>"><%= flash.msg %></p></div><% } %>

@@ -21,6 +21,8 @@ const KOLOM_BARU = {
   bukti_data:   { type: DataTypes.TEXT('long'), allowNull: true },
   bukti_mime:   { type: DataTypes.STRING(30),  allowNull: true },
   status_bayar: { type: DataTypes.STRING(30),  allowNull: true, defaultValue: 'belum_bayar' },
+  snap_token:   { type: DataTypes.STRING(255), allowNull: true },
+  midtrans_order_id: { type: DataTypes.STRING(60),  allowNull: true },
 };
 
 const CheckoutPesanan = sequelize.define('CheckoutPesanan', {

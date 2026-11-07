@@ -1,8 +1,11 @@
 // Fitur Artikel: baca, cari, filter, suka, simpan, komentar (pengunjung) + kelola (admin)
 const router = require('express').Router();
+const fs = require('fs');
+const path = require('path');
 const { Op, fn, col, where: sqlWhere } = require('sequelize');
 const { Artikel, ArtikelReaksi, ArtikelKomentar } = require('../models');
 const { requireRole } = require('../middleware/auth');
+const uploadArtikel = require('../middleware/upload');
 
 
 const adminOnly = requireRole('admin');
@@ -14,6 +17,23 @@ const tanggal = (d) => new Date(d).toLocaleDateString('id-ID', { day: 'numeric',
 const menitBaca = (teks) => Math.max(1, Math.round(String(teks).split(/\s+/).filter(Boolean).length / 200));
 const gambarValid = (g) => !g || /^(https?:\/\/|\/)/i.test(g);
 const idUser = (res) => (res.locals.user && res.locals.user.id) || null;
+
+
+// Hapus file upload dari disk (hanya yang ada di /uploads/artikel/)
+const FOLDER_UPLOAD = path.join(__dirname, '..', '..', 'public', 'uploads', 'artikel');
+function hapusBerkas(url) {
+  if (!url || !String(url).startsWith('/uploads/artikel/')) return;
+  const p = path.join(__dirname, '..', '..', 'public', url);
+  if (!p.startsWith(FOLDER_UPLOAD + path.sep)) return;
+  fs.unlink(p, () => {});
+}
+
+
+// Kalau validasi gagal, buang file yang barusan terupload
+function buangUploadBaru(req) {
+  const f = req.files || {};
+  Object.values(f).flat().forEach((x) => fs.unlink(x.path, () => {}));
+}
 
 
 // Cari per kata: tiap kata harus ada di judul, ringkasan, atau isi. Huruf besar/kecil tidak berpengaruh.
@@ -30,7 +50,7 @@ function kondisiCari(q) {
 
 function buatSlug(judul) {
   return String(judul).toLowerCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
     .slice(0, 80) || 'artikel';
 }
@@ -47,27 +67,25 @@ async function slugUnik(judul, idSendiri = null) {
 }
 
 
-// Aturan menulis: kosongkan satu baris untuk paragraf baru, "## " untuk subjudul, "- " untuk daftar.
+// Aturan menulis: tiap baris (Enter) menjadi satu paragraf sendiri,
+// "## " untuk subjudul, "- " untuk daftar poin.
 function bagian(isi) {
   const hasil = [];
-  String(isi).split(/\r?\n\s*\r?\n/).map((b) => b.trim()).filter(Boolean).forEach((blok) => {
-    const baris = blok.split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
-    let i = 0;
-    while (i < baris.length) {
-      if (baris[i].startsWith('## ')) {
-        hasil.push({ tipe: 'h2', teks: baris[i].slice(3).trim() });
-        i++;
-      } else if (baris[i].startsWith('- ')) {
-        const item = [];
-        while (i < baris.length && baris[i].startsWith('- ')) { item.push(baris[i].slice(2).trim()); i++; }
-        hasil.push({ tipe: 'ul', item });
-      } else {
-        const para = [];
-        while (i < baris.length && !baris[i].startsWith('## ') && !baris[i].startsWith('- ')) { para.push(baris[i]); i++; }
-        hasil.push({ tipe: 'p', teks: para.join('\n') });
-      }
+  const baris = String(isi).split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
+  let i = 0;
+  while (i < baris.length) {
+    if (baris[i].startsWith('## ')) {
+      hasil.push({ tipe: 'h2', teks: baris[i].slice(3).trim() });
+      i++;
+    } else if (baris[i].startsWith('- ')) {
+      const item = [];
+      while (i < baris.length && baris[i].startsWith('- ')) { item.push(baris[i].slice(2).trim()); i++; }
+      hasil.push({ tipe: 'ul', item });
+    } else {
+      hasil.push({ tipe: 'p', teks: baris[i] });
+      i++;
     }
-  });
+  }
   return hasil;
 }
 
@@ -100,6 +118,38 @@ async function lengkapi(daftar, uid) {
     };
   });
 }
+
+
+/* ---------- Form admin: nilai awal, validasi, dan pengambilan data ---------- */
+const formKosong = { judul: '', kategori: '', ringkasan: '', gambar: '', penulis: '', penulisFoto: '', isi: '', terbit: true };
+
+
+function validasi(req) {
+  const b = req.body || {};
+  if (req.uploadError) return req.uploadError;
+  const judul = (b.judul || '').trim();
+  const isi = (b.isi || '').trim();
+  if (!judul) return 'Judul wajib diisi.';
+  if (judul.length > 200) return 'Judul maksimal 200 karakter.';
+  if (!isi) return 'Isi artikel wajib diisi.';
+  if ((b.ringkasan || '').length > 300) return 'Ringkasan maksimal 300 karakter.';
+  if (!gambarValid((b.gambar || '').trim())) return 'Alamat gambar harus diawali http://, https://, atau /.';
+  if (!gambarValid((b.penulisFoto || '').trim())) return 'Alamat foto penulis harus diawali http://, https://, atau /.';
+  return null;
+}
+
+
+// Menerima objek body (b), BUKAN req. Panggil: dariForm(req.body) dari dalam handler route.
+const dariForm = (b) => ({
+  judul: (b.judul || '').trim(),
+  kategori: (b.kategori || '').trim().slice(0, 60) || null,
+  ringkasan: (b.ringkasan || '').trim() || null,
+  gambar: (b.gambar || '').trim() || null,
+  penulis: (b.penulis || '').trim().slice(0, 100) || null,
+  penulisFoto: (b.penulisFoto || '').trim() || null,
+  isi: (b.isi || '').trim(),
+  terbit: b.terbit === 'on',
+});
 
 
 /* ================= Pengunjung ================= */
@@ -215,43 +265,20 @@ router.get('/kelola/artikel', adminOnly, async (req, res, next) => {
 });
 
 
-const formKosong = { judul: '', kategori: '', ringkasan: '', gambar: '', penulis: '', penulisFoto: '', isi: '', terbit: true };
-
-
 router.get('/kelola/artikel/baru', adminOnly, (req, res) => {
   res.render('kelola/artikel-form', { title: 'Tulis Artikel', artikel: null, form: formKosong, error: null });
 });
 
 
-function validasi(b) {
-  const judul = (b.judul || '').trim();
-  const isi = (b.isi || '').trim();
-  if (!judul) return 'Judul wajib diisi.';
-  if (judul.length > 200) return 'Judul maksimal 200 karakter.';
-  if (!isi) return 'Isi artikel wajib diisi.';
-  if ((b.ringkasan || '').length > 300) return 'Ringkasan maksimal 300 karakter.';
-  if (!gambarValid((b.gambar || '').trim())) return 'Alamat gambar harus diawali http://, https://, atau /.';
-  if (!gambarValid((b.penulisFoto || '').trim())) return 'Alamat foto penulis harus diawali http://, https://, atau /.';
-  return null;
-}
-
-
-const dariForm = (b) => ({
-  judul: (b.judul || '').trim(),
-  kategori: (b.kategori || '').trim().slice(0, 60) || null,
-  ringkasan: (b.ringkasan || '').trim() || null,
-  gambar: (b.gambar || '').trim() || null,
-  penulis: (b.penulis || '').trim().slice(0, 100) || null,
-  penulisFoto: (b.penulisFoto || '').trim() || null,
-  isi: (b.isi || '').trim(),
-  terbit: b.terbit === 'on',
-});
-
-
-router.post('/kelola/artikel', adminOnly, async (req, res, next) => {
+router.post('/kelola/artikel', adminOnly, uploadArtikel, async (req, res, next) => {
   try {
-    const error = validasi(req.body);
-    if (error) return res.status(400).render('kelola/artikel-form', { title: 'Tulis Artikel', artikel: null, form: { ...req.body, terbit: req.body.terbit === 'on' }, error });
+    const error = validasi(req);
+    if (error) {
+      buangUploadBaru(req);
+      return res.status(400).render('kelola/artikel-form', {
+        title: 'Tulis Artikel', artikel: null, form: { ...req.body, terbit: req.body.terbit === 'on' }, error,
+      });
+    }
     const data = dariForm(req.body);
     await Artikel.create({
       ...data,
@@ -273,13 +300,24 @@ router.get('/kelola/artikel/:id/edit', adminOnly, async (req, res, next) => {
 });
 
 
-router.post('/kelola/artikel/:id', adminOnly, async (req, res, next) => {
+router.post('/kelola/artikel/:id', adminOnly, uploadArtikel, async (req, res, next) => {
   try {
     const a = await Artikel.findByPk(req.params.id);
     if (!a) return next();
-    const error = validasi(req.body);
-    if (error) return res.status(400).render('kelola/artikel-form', { title: 'Ubah Artikel', artikel: a, form: { ...req.body, terbit: req.body.terbit === 'on' }, error });
-    await a.update(dariForm(req.body));
+    const error = validasi(req);
+    if (error) {
+      buangUploadBaru(req);
+      return res.status(400).render('kelola/artikel-form', {
+        title: 'Ubah Artikel', artikel: a, form: { ...req.body, terbit: req.body.terbit === 'on' }, error,
+      });
+    }
+    const lamaGambar = a.gambar;
+    const lamaFoto = a.penulisFoto;
+    const data = dariForm(req.body);
+    await a.update(data);
+    // Hapus file lama dari disk kalau sudah diganti atau dihapus
+    if (lamaGambar && lamaGambar !== data.gambar) hapusBerkas(lamaGambar);
+    if (lamaFoto && lamaFoto !== data.penulisFoto) hapusBerkas(lamaFoto);
     req.flash('ok', 'Artikel berhasil diperbarui.');
     res.redirect('/kelola/artikel');
   } catch (e) { next(e); }
@@ -288,9 +326,11 @@ router.post('/kelola/artikel/:id', adminOnly, async (req, res, next) => {
 
 router.post('/kelola/artikel/:id/hapus', adminOnly, async (req, res, next) => {
   try {
+    const a = await Artikel.findByPk(req.params.id);
     await ArtikelReaksi.destroy({ where: { artikelId: req.params.id } });
     await ArtikelKomentar.destroy({ where: { artikelId: req.params.id } });
     await Artikel.destroy({ where: { id: req.params.id } });
+    if (a) { hapusBerkas(a.gambar); hapusBerkas(a.penulisFoto); }
     req.flash('ok', 'Artikel dihapus.');
     res.redirect('/kelola/artikel');
   } catch (e) { next(e); }
@@ -298,3 +338,4 @@ router.post('/kelola/artikel/:id/hapus', adminOnly, async (req, res, next) => {
 
 
 module.exports = router;
+

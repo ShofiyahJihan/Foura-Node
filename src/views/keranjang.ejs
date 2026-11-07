@@ -11,8 +11,15 @@
   <% } else { %>
     <div class="kr-grid">
       <div>
+        <label style="flex-direction:row;align-items:center;gap:.5rem;margin:0 0 .8rem;font-size:.9rem;cursor:pointer">
+          <input type="checkbox" id="pilihSemua" checked style="width:18px;height:18px;accent-color:#6b2737"> Pilih semua
+        </label>
+
         <% item.forEach(i => { %>
           <article class="kr-item">
+            <input type="checkbox" class="pilih-item" name="pilih" value="<%= i.id %>" form="formPesan"
+                   data-sub="<%= i.harga * i.jumlah %>" checked
+                   style="width:20px;height:20px;accent-color:#6b2737;flex-shrink:0;cursor:pointer" aria-label="Pilih <%= i.nama %>">
             <% if (i.gambar) { %>
               <img src="<%= i.gambar %>" alt="<%= i.nama %>">
             <% } else { %>
@@ -36,16 +43,42 @@
 
       <aside class="kr-ringkas">
         <h3>Ringkasan</h3>
-        <div class="kr-total"><span>Total</span><b><%= rp(total) %></b></div>
-        <form method="GET" action="/pembayaran">
+        <p class="kr-kecil" style="margin:0 0 .6rem"><span id="jmlPilih"><%= item.length %></span> item dipilih</p>
+        <div class="kr-total"><span>Total</span><b id="totalPilih"><%= rp(total) %></b></div>
+        <form id="formPesan" method="GET" action="/pembayaran">
           <label>Catatan untuk tim (opsional)
             <textarea name="catatan" placeholder="Contoh: brand fashion hijab, target usia 20-30"></textarea>
           </label>
-          <button type="submit" class="btn-tambah kr-btn">Pesan Sekarang</button>
+          <button type="submit" id="btnPesan" class="btn-tambah kr-btn">Pesan Sekarang</button>
         </form>
-        <p class="kr-kecil">Setelah memesan, tim kami akan menghubungi kamu untuk brief dan pembayaran.</p>
+        <p class="kr-kecil">Item yang tidak dicentang tetap ada di keranjang. Setelah memesan, tim kami akan menghubungi kamu untuk brief dan pembayaran.</p>
       </aside>
     </div>
   <% } %>
 </section>
+
+<script>
+  (function () {
+    var cek = document.querySelectorAll('.pilih-item');
+    if (!cek.length) return;
+    var semua = document.getElementById('pilihSemua');
+    var btn = document.getElementById('btnPesan');
+
+    function hitung() {
+      var total = 0, n = 0;
+      cek.forEach(function (c) { if (c.checked) { total += Number(c.dataset.sub); n++; } });
+      document.getElementById('totalPilih').textContent = 'Rp ' + total.toLocaleString('id-ID');
+      document.getElementById('jmlPilih').textContent = n;
+      btn.disabled = n === 0;
+      btn.style.opacity = n === 0 ? '.5' : '';
+      semua.checked = n === cek.length;
+    }
+    cek.forEach(function (c) { c.addEventListener('change', hitung); });
+    semua.addEventListener('change', function () {
+      cek.forEach(function (c) { c.checked = semua.checked; });
+      hitung();
+    });
+    hitung();
+  })();
+</script>
 <%- include('partials/footer') %>

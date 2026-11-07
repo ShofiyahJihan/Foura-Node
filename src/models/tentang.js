@@ -17,4 +17,11 @@ const TentangTeks = sequelize.define('TentangTeks', {
   nilai: { type: DataTypes.TEXT, allowNull: true },
 }, { tableName: 'tentang_teks' });
 
-module.exports = { TentangItem, TentangTeks };
+// file gambar hasil unggahan (disimpan di database)
+const TentangGambar = sequelize.define('TentangGambar', {
+  kunci: { type: DataTypes.STRING(60), allowNull: false, unique: true },
+  mime:  { type: DataTypes.STRING(30), allowNull: false },
+  data:  { type: DataTypes.BLOB('long'), allowNull: false },
+}, { tableName: 'tentang_gambar' });
+
+module.exports = { TentangItem, TentangTeks, TentangGambar };

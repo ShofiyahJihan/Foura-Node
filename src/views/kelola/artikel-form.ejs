@@ -2,16 +2,52 @@
 <section class="form-wrap wide">
   <h1><%= artikel ? 'Ubah Artikel' : 'Tulis Artikel' %></h1>
   <% if (error) { %><p class="err"><%= error %></p><% } %>
-  <form method="post" action="<%= artikel ? '/kelola/artikel/' + artikel.id : '/kelola/artikel' %>" class="form kartu">
+  <form method="post" enctype="multipart/form-data" action="<%= artikel ? '/kelola/artikel/' + artikel.id : '/kelola/artikel' %>" class="form kartu">
     <label>Judul<input name="judul" maxlength="200" value="<%= form.judul || '' %>" required></label>
+
+
     <div class="dua">
-      <label>Kategori <span class="bantuan">(contoh: Tips Konten)</span><input name="kategori" maxlength="60" value="<%= form.kategori || '' %>"></label>
-      <label>Alamat gambar <span class="bantuan">(link, boleh kosong)</span><input name="gambar" value="<%= form.gambar || '' %>" placeholder="https://… atau /images/nama.jpg"></label>
+      <label>Kategori <span class="bantuan">(contoh: Tips Konten)</span>
+        <input name="kategori" maxlength="60" value="<%= form.kategori || '' %>">
+      </label>
+
+
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <label>Gambar artikel <span class="bantuan">(pilih file JPG/PNG/WEBP, maks. 2 MB, boleh kosong)</span>
+          <input type="file" name="gambarFile" accept="image/jpeg,image/png,image/webp">
+        </label>
+        <input type="hidden" name="gambarLama" value="<%= form.gambar || '' %>">
+        <% if (form.gambar) { %>
+          <img src="<%= form.gambar %>" alt="Gambar saat ini" style="max-width:160px;border-radius:12px;display:block">
+          <label style="flex-direction:row;align-items:center;gap:.5rem;font-size:.9rem">
+            <input type="checkbox" name="hapusGambar"> Hapus gambar ini
+          </label>
+        <% } %>
+      </div>
     </div>
+
+
     <div class="dua">
-      <label>Nama penulis <span class="bantuan">(kosong = nama akunmu)</span><input name="penulis" maxlength="100" value="<%= form.penulis || '' %>" placeholder="Tim Foura Creative"></label>
-      <label>Foto penulis <span class="bantuan">(link, boleh kosong)</span><input name="penulisFoto" value="<%= form.penulisFoto || '' %>" placeholder="https://… atau /images/logo.png"></label>
+      <label>Nama penulis <span class="bantuan">(kosong = nama akunmu)</span>
+        <input name="penulis" maxlength="100" value="<%= form.penulis || '' %>" placeholder="Tim Foura Creative">
+      </label>
+
+
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <label>Foto penulis <span class="bantuan">(pilih file JPG/PNG/WEBP, maks. 2 MB, boleh kosong)</span>
+          <input type="file" name="penulisFotoFile" accept="image/jpeg,image/png,image/webp">
+        </label>
+        <input type="hidden" name="penulisFotoLama" value="<%= form.penulisFoto || '' %>">
+        <% if (form.penulisFoto) { %>
+          <img src="<%= form.penulisFoto %>" alt="Foto penulis saat ini" style="width:60px;height:60px;object-fit:cover;border-radius:50%;display:block">
+          <label style="flex-direction:row;align-items:center;gap:.5rem;font-size:.9rem">
+            <input type="checkbox" name="hapusPenulisFoto"> Hapus foto ini
+          </label>
+        <% } %>
+      </div>
     </div>
+
+
     <label>Ringkasan <span class="bantuan">(tampil di daftar artikel, maks. 300 huruf)</span><textarea name="ringkasan" rows="2" maxlength="300"><%= form.ringkasan || '' %></textarea></label>
     <label>Isi artikel
       <textarea name="isi" rows="16" required><%= form.isi || '' %></textarea>
@@ -20,7 +56,6 @@
     <label style="flex-direction:row;align-items:center;gap:.6rem"><input type="checkbox" name="terbit" <%= form.terbit ? 'checked' : '' %>> Terbitkan sekarang (hilangkan centang untuk menyimpan sebagai draf)</label>
     <button class="btn">Simpan</button>
   </form>
-  <p><a href="/kelola/artikel">← Kembali</a></p>
 </section>
 <%- include('../partials/dash-footer') %>
 

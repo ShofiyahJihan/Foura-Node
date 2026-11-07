@@ -14,10 +14,12 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "dotenv": "^18.0.9",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
-    "multer": "^2.0.2",
+    "midtrans-client": "^1.4.3",
+    "multer": "^2.5.0",
     "mysql2": "^3.24.6",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7"
@@ -29,6 +31,3 @@
     "nodemon": "^3.1.14"
   }
 }
-
-
-

@@ -993,8 +993,104 @@ small{color:#8a7774}
 .kp-populer .kp-ok{background:rgba(255,255,255,.18);color:#fff}
 .kp-populer .kp-batal{color:#fff}
 
+/* ===== Ikon keranjang navbar ===== */
+.nav-cart {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  padding: 0 !important;
+  margin-right: 12px !important;
+  border-radius: 50% !important;
+  background: rgba(107, 31, 58, .08) !important;
+  color: #6b1f3a !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  transition: background .2s, color .2s, transform .15s;
+}
 
+.nav-cart svg {
+  width: 22px !important;
+  height: 22px !important;
+  flex-shrink: 0;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
+.nav-cart:hover,
+.nav-cart:active,
+.nav-cart:focus-visible {
+  background: #6b1f3a !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.nav-cart:active {
+  transform: scale(.94);
+}
+
+/* Badge: selalu menempel di pojok kanan atas */
+.nav-cart .nav-cart-badge {
+  position: absolute !important;
+  top: -4px !important;
+  right: -4px !important;
+  left: auto !important;
+  bottom: auto !important;
+  margin: 0 !important;
+  transform: none !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  padding: 0 5px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px !important;
+  background: #6b1f3a !important;
+  color: #fff !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  box-shadow: 0 0 0 2px #fff !important;
+}
+
+/* Saat hover, badge jadi pink supaya tetap kelihatan */
+.nav-cart:hover .nav-cart-badge {
+  background: #d94a6a !important;
+}
+
+/* Hilangkan badge ganda (dari EJS + dari JS) */
+.nav-cart .nav-cart-badge ~ .nav-cart-badge,
+.nav-cart > span:not(.nav-cart-badge) {
+  display: none !important;
+}
+
+.nav-cart .nav-cart-badge[hidden] { display: none !important; }
+
+.nav-cart {
+  width: 38px !important;
+  height: 38px !important;
+  margin-right: 10px !important;
+}
+
+.nav-cart svg {
+  width: 19px !important;
+  height: 19px !important;
+}
+
+.nav-cart .nav-cart-badge {
+  top: -3px !important;
+  right: -3px !important;
+  min-width: 16px !important;
+  height: 16px !important;
+  padding: 0 4px !important;
+  font-size: 10px !important;
+}
 
 /* ===== Tombol Pesan Sekarang ===== */
 .kr-ringkas .kr-btn{display:block;width:100%;background:#6b2737;color:#fff;border:0;border-radius:999px;padding:13px;font:inherit;font-size:.95rem;font-weight:500;cursor:pointer;transition:background .2s}
@@ -1526,6 +1622,26 @@ body{background:#f6efeb;color:#2b2320;font-family:'DM Sans',sans-serif}
   .dt-wrap,.dt-lain{padding-left:18px;padding-right:18px}
 }
 
+.btn-reaksi { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.btn-reaksi svg { fill: none; stroke: currentColor; transition: transform .15s, fill .15s; }
+.btn-reaksi.aktif { color: #7a1f3d; }
+.btn-reaksi.aktif svg { fill: currentColor; }
+.btn-reaksi:active svg { transform: scale(1.2); }
+
+.dt-teks { font-size: 1.05rem; line-height: 1.85; color: #3b2f33; overflow-wrap: break-word; }
+.dt-teks p { margin: 0 0 1.25em; white-space: normal; text-align: left; }
+.dt-teks h2 { margin: 2em 0 .6em; line-height: 1.3; }
+.dt-teks h2:first-child { margin-top: 0; }
+.dt-teks ul { margin: 0 0 1.4em; padding-left: 1.4em; }
+.dt-teks li { margin-bottom: .5em; }
+
+.dt-teks p {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
 /* =====================================================
    HALAMAN TENTANG KAMI
    ===================================================== */
@@ -1710,3 +1826,4 @@ body{background:#f6efeb;color:#2b2320;font-family:'DM Sans',sans-serif}
 @media(max-width:850px){
   .pd-grid{grid-template-columns:1fr;gap:1.6rem}
 }
+

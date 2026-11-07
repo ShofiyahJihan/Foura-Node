@@ -2,23 +2,30 @@
 
 <%
 const LABEL = {
-    hero_judul: 'Hero: judul (kata miring marun: *kata*)',
+  hero_judul: 'Hero: judul (kata miring marun: *kata*)', hero_teks: 'Hero: paragraf',
   cerita_judul: 'Cerita: judul', cerita_1: 'Cerita: paragraf 1', cerita_2: 'Cerita: paragraf 2',
-  cerita_tombol: 'Cerita: teks tombol', cerita_gambar: 'Cerita: gambar (link/path)',
+  cerita_tombol: 'Cerita: teks tombol',
   tim_judul: 'Tim: judul', tim_teks: 'Tim: paragraf',
-  nilai_judul: 'Nilai: judul', nilai_gambar: 'Nilai: gambar (link/path)',
+  nilai_judul: 'Nilai: judul',
   cta_eyebrow: 'Ajakan: teks kecil', cta_judul: 'Ajakan: judul', cta_tombol: 'Ajakan: teks tombol',
 };
 const PANJANG = ['hero_teks', 'cerita_1', 'cerita_2', 'tim_teks'];
+const GAMBAR = {
+  hero_gambar: 'Hero: gambar latar',
+  cerita_gambar: 'Cerita: gambar',
+  nilai_gambar: 'Nilai: gambar',
+};
 const GRUP = [['keunggulan', 'Keunggulan'], ['tim', 'Tim kami'], ['nilai', 'Nilai & visi']];
 %>
 
 <section class="form-wrap wide">
   <h1>Kelola Tentang Kami</h1>
   <% if (ok) { %><p class="bantuan" style="color:#2f7a45">Tersimpan.</p><% } %>
+  <% if (err) { %><p class="err"><%= err %></p><% } %>
 
-  <form method="post" action="/kelola/tentang/teks" class="form kartu">
+  <form method="post" action="/kelola/tentang/teks" enctype="multipart/form-data" class="form kartu">
     <h3>Teks &amp; gambar halaman</h3>
+
     <% Object.keys(LABEL).forEach(k => { %>
       <label><%= LABEL[k] %>
         <% if (PANJANG.includes(k)) { %>
@@ -28,7 +35,22 @@ const GRUP = [['keunggulan', 'Keunggulan'], ['tim', 'Tim kami'], ['nilai', 'Nila
         <% } %>
       </label>
     <% }) %>
-    <button class="btn" type="submit">Simpan teks</button>
+
+    <% Object.keys(GAMBAR).forEach(k => { %>
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <label><%= GAMBAR[k] %> <span class="bantuan">(pilih file JPG/PNG/WEBP, maks. 2 MB, boleh kosong)</span>
+          <input type="file" name="<%= k %>_file" accept="image/jpeg,image/png,image/webp">
+        </label>
+        <% if (T.teks[k]) { %>
+          <img src="<%= T.teks[k] %>" alt="Gambar saat ini" style="max-width:200px;border-radius:12px;display:block" onerror="this.style.display='none'">
+          <label style="flex-direction:row;align-items:center;gap:.5rem;font-size:.9rem">
+            <input type="checkbox" name="hapus_<%= k %>"> Hapus gambar ini (kembali ke gambar bawaan)
+          </label>
+        <% } %>
+      </div>
+    <% }) %>
+
+    <button class="btn" type="submit">Simpan teks &amp; gambar</button>
   </form>
 
   <% GRUP.forEach(([jenis, nama]) => { %>
@@ -36,7 +58,7 @@ const GRUP = [['keunggulan', 'Keunggulan'], ['tim', 'Tim kami'], ['nilai', 'Nila
       <h3><%= nama %></h3>
 
       <% T[jenis].forEach(it => { %>
-        <form method="post" action="/kelola/tentang/item/<%= it.id %>" class="form" style="border-bottom:1px solid var(--line);padding-bottom:1rem">
+        <form method="post" action="/kelola/tentang/item/<%= it.id %>" enctype="multipart/form-data" class="form" style="border-bottom:1px solid var(--line);padding-bottom:1rem">
           <div class="dua">
             <label>Judul / nama <input name="judul" value="<%= it.judul %>" required></label>
             <label>Urutan <input name="urutan" type="number" value="<%= it.urutan %>"></label>
@@ -46,7 +68,18 @@ const GRUP = [['keunggulan', 'Keunggulan'], ['tim', 'Tim kami'], ['nilai', 'Nila
             <label>Ikon <span class="bantuan">(bulb, users, chart, heart)</span> <input name="ikon" value="<%= it.ikon || '' %>"></label>
           <% } %>
           <% if (jenis === 'tim') { %>
-            <label>Foto <span class="bantuan">(link/path)</span> <input name="foto" value="<%= it.foto || '' %>"></label>
+            <div style="display:flex;flex-direction:column;gap:.5rem">
+              <label>Foto <span class="bantuan">(pilih file JPG/PNG/WEBP, maks. 2 MB, boleh kosong)</span>
+                <input type="file" name="foto_file" accept="image/jpeg,image/png,image/webp">
+              </label>
+              <input type="hidden" name="foto" value="<%= it.foto || '' %>">
+              <% if (it.foto) { %>
+                <img src="<%= it.foto %>" alt="Foto saat ini" style="width:70px;height:70px;object-fit:cover;border-radius:50%;display:block" onerror="this.style.display='none'">
+                <label style="flex-direction:row;align-items:center;gap:.5rem;font-size:.9rem">
+                  <input type="checkbox" name="hapus_foto"> Hapus foto ini
+                </label>
+              <% } %>
+            </div>
           <% } %>
           <div style="display:flex;gap:.5rem">
             <button class="btn sm" type="submit">Simpan</button>
@@ -55,7 +88,7 @@ const GRUP = [['keunggulan', 'Keunggulan'], ['tim', 'Tim kami'], ['nilai', 'Nila
         </form>
       <% }) %>
 
-      <form method="post" action="/kelola/tentang/item/tambah/<%= jenis %>" class="form">
+      <form method="post" action="/kelola/tentang/item/tambah/<%= jenis %>" enctype="multipart/form-data" class="form">
         <b>Tambah baru</b>
         <div class="dua">
           <label>Judul / nama <input name="judul" required></label>
@@ -63,7 +96,11 @@ const GRUP = [['keunggulan', 'Keunggulan'], ['tim', 'Tim kami'], ['nilai', 'Nila
         </div>
         <label>Teks / jabatan <textarea name="teks" rows="2"></textarea></label>
         <% if (jenis === 'keunggulan') { %><label>Ikon <input name="ikon" placeholder="bulb"></label><% } %>
-        <% if (jenis === 'tim') { %><label>Foto <input name="foto" placeholder="/images/tim/nama.jpg"></label><% } %>
+        <% if (jenis === 'tim') { %>
+          <label>Foto <span class="bantuan">(pilih file JPG/PNG/WEBP, maks. 2 MB, boleh kosong)</span>
+            <input type="file" name="foto_file" accept="image/jpeg,image/png,image/webp">
+          </label>
+        <% } %>
         <button class="btn sm" type="submit">Tambah</button>
       </form>
     </div>

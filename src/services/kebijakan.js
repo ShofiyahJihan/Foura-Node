@@ -55,4 +55,83 @@ async function ambilHalaman(halaman) {
   return hasil.map(b => b.get({ plain: true }));
 }
 
-module.exports = { DEFAULT, siapkan, ambilHalaman };
+const HALAMAN = { 'syarat-ketentuan': 'Syarat dan Ketentuan', 'kebijakan-privasi': 'Kebijakan Privasi' };
+
+const bersih = (b) => ({
+  judul:  String(b.judul || '').trim().slice(0, 150),
+  urutan: parseInt(b.urutan, 10) || 0,
+});
+
+async function ambilSemua() {
+  await siapkan();
+  const hasil = {};
+  for (const h of Object.keys(HALAMAN)) hasil[h] = await ambilHalaman(h);
+  return hasil;
+}
+
+async function ambilBagian(id) {
+  await siapkan();
+  const b = await KebijakanBagian.findByPk(id, {
+    include: [{ model: KebijakanButir, as: 'butir' }],
+    order: [[{ model: KebijakanButir, as: 'butir' }, 'urutan', 'ASC']],
+  });
+  return b ? b.get({ plain: true }) : null;
+}
+
+async function tambahBagian(halaman, body) {
+  await siapkan();
+  if (!HALAMAN[halaman]) return;
+  const f = bersih(body);
+  if (!f.judul) return;
+  if (!f.urutan) f.urutan = (await KebijakanBagian.count({ where: { halaman } })) + 1;
+  await KebijakanBagian.create({ halaman, ...f });
+}
+
+async function ubahBagian(id, body) {
+  await siapkan();
+  const f = bersih(body);
+  if (!f.judul) return;
+  await KebijakanBagian.update(f, { where: { id } });
+}
+
+async function hapusBagian(id) {
+  await siapkan();
+  await KebijakanButir.destroy({ where: { bagian_id: id } });
+  await KebijakanBagian.destroy({ where: { id } });
+}
+
+async function ambilButir(id) {
+  await siapkan();
+  return KebijakanButir.findByPk(id, { raw: true });
+}
+
+const bersihButir = (b) => ({
+  ...bersih(b),
+  isi: String(b.isi || '').trim(),
+});
+
+async function tambahButir(bagianId, body) {
+  await siapkan();
+  const f = bersihButir(body);
+  if (!f.judul || !f.isi) return;
+  if (!f.urutan) f.urutan = (await KebijakanButir.count({ where: { bagian_id: bagianId } })) + 1;
+  await KebijakanButir.create({ bagian_id: bagianId, ...f });
+}
+
+async function ubahButir(id, body) {
+  await siapkan();
+  const f = bersihButir(body);
+  if (!f.judul || !f.isi) return;
+  await KebijakanButir.update(f, { where: { id } });
+}
+
+async function hapusButir(id) {
+  await siapkan();
+  await KebijakanButir.destroy({ where: { id } });
+}
+
+module.exports = {
+  DEFAULT, HALAMAN, siapkan, ambilHalaman, ambilSemua,
+  ambilBagian, tambahBagian, ubahBagian, hapusBagian,
+  ambilButir, tambahButir, ubahButir, hapusButir,
+};

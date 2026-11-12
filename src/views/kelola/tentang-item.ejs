@@ -1,0 +1,42 @@
+<%- include('../partials/dash-header', { aktif: 'tentang', judul: item ? 'Ubah item' : 'Tambah item' }) %>
+<section class="form-wrap wide">
+  <p><a href="/kelola/tentang/bagian/<%= jenis %>">← Kembali ke <%= nama %></a></p>
+  <h1><%= item ? 'Ubah' : 'Tambah' %> <%= nama %></h1>
+  <% if (err) { %><p class="err"><%= err %></p><% } %>
+
+  <form method="post" enctype="multipart/form-data" class="form kartu"
+        action="<%= item ? '/kelola/tentang/item/' + item.id : '/kelola/tentang/item/tambah/' + jenis %>">
+    <div class="dua">
+      <label>Judul / nama <input name="judul" value="<%= item ? item.judul : '' %>" required maxlength="150"></label>
+      <label>Urutan <input name="urutan" type="number" value="<%= item ? item.urutan : urutanBaru %>"></label>
+    </div>
+    <label>Teks / jabatan <textarea name="teks" rows="3"><%= item ? (item.teks || '') : '' %></textarea></label>
+
+    <% if (jenis === 'keunggulan') { %>
+      <label>Ikon <span class="bantuan">(bulb, users, chart, heart)</span>
+        <input name="ikon" value="<%= item ? (item.ikon || '') : '' %>" placeholder="bulb">
+      </label>
+    <% } %>
+
+    <% if (jenis === 'tim') { %>
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <label>Foto <span class="bantuan">(pilih file JPG/PNG/WEBP, maks. 2 MB, boleh kosong)</span>
+          <input type="file" name="foto_file" accept="image/jpeg,image/png,image/webp">
+        </label>
+        <% if (item) { %><input type="hidden" name="foto" value="<%= item.foto || '' %>"><% } %>
+        <% if (item && item.foto) { %>
+          <img src="<%= item.foto %>" alt="Foto saat ini" style="width:70px;height:70px;object-fit:cover;border-radius:50%;display:block" onerror="this.style.display='none'">
+          <label style="flex-direction:row;align-items:center;gap:.5rem;font-size:.9rem">
+            <input type="checkbox" name="hapus_foto"> Hapus foto ini
+          </label>
+        <% } %>
+      </div>
+    <% } %>
+
+    <div style="display:flex;gap:.5rem">
+      <button class="btn" type="submit">Simpan</button>
+      <a class="btn ghost" href="/kelola/tentang/bagian/<%= jenis %>">Batal</a>
+    </div>
+  </form>
+</section>
+<%- include('../partials/dash-footer') %>

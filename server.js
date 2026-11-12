@@ -31,10 +31,7 @@ app.use('/', require('./src/routes/artikel'));
 app.use('/profil', require('./src/routes/profil'));
 app.use('/pembayaran', require('./src/routes/pembayaran'));
 app.use('/kelola/tentang', require('./src/routes/kelola-tentang'));
-app.use('/kelola', require('./src/routes/kelola'));
-app.use('/kelola', require('./src/routes/kelola'));
-
-app.use('/kelola/tentang', require('./src/routes/kelola-tentang'));
+app.use('/kelola/kebijakan', require('./src/routes/kelola-kebijakan'));
 app.use('/kelola', require('./src/routes/kelola'));
 
 

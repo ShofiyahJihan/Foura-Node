@@ -35,7 +35,6 @@
 <body>
 <div class="d-app">
 
-
   <!-- SIDEBAR -->
   <aside class="d-side">
     <a href="/" class="d-brand">
@@ -45,23 +44,23 @@
     <nav class="d-menu">
       <a href="/dashboard" class="on"><span>▦</span> Dashboard</a>
       <% if (isAdmin) { %>
-  <a href="/admin/pesanan"><span>◈</span> Kelola Pesanan</a>
-  <a href="/kelola/produk"><span>▣</span> Kelola Katalog</a>
-  <a href="/kelola/kategori"><span>☰</span> Kelola Kategori</a>
-  <% if (role === 'admin') { %>
-    <a href="/kelola/pengguna"><span>☺</span> Kelola Pengguna</a>
-    <a href="/kelola/artikel"><span>✎</span> Kelola Artikel</a>
-    <a href="/kelola/tentang"><span>ⓘ</span> Kelola Tentang Kami</a>
-  <% } %>
-<% } else { %>
-  <a href="/riwayat"><span>☰</span> Riwayat Pesanan</a>
-  <a href="/profil"><span>☺</span> Profil Pengguna</a>
-<% } %>
+        <a href="/admin/pesanan"><span>◈</span> Kelola Pesanan</a>
+        <a href="/kelola/produk"><span>▣</span> Kelola Katalog</a>
+        <a href="/kelola/kategori"><span>☰</span> Kelola Kategori</a>
+        <% if (role === 'admin') { %>
+          <a href="/kelola/pengguna"><span>☺</span> Kelola Pengguna</a>
+          <a href="/kelola/artikel"><span>✎</span> Kelola Artikel</a>
+          <a href="/kelola/tentang"><span>ⓘ</span> Kelola Tentang Kami</a>
+          <a href="/kelola/kebijakan"><span>§</span> Kelola Kebijakan</a>
+        <% } %>
+      <% } else { %>
+        <a href="/riwayat"><span>☰</span> Riwayat Pesanan</a>
+        <a href="/profil"><span>☺</span> Profil Pengguna</a>
+      <% } %>
       <button type="button" id="btnKeluar"><span>⇥</span> Keluar</button>
     </nav>
     <p class="d-quote">More Views<br>More Customers</p>
   </aside>
-
 
   <!-- ISI -->
   <main class="d-main">
@@ -79,12 +78,10 @@
       </div>
     </header>
 
-
 <% if (isAdmin) { %>
     <!-- =================== ADMIN / SELLER =================== -->
     <div class="d-cols">
       <div class="d-left">
-
 
         <section class="d-welcome">
           <div>
@@ -94,7 +91,6 @@
           </div>
           <div class="d-banner"><img src="/images/hero.jpg" alt="Foura Creative"></div>
         </section>
-
 
         <div class="d-stats">
           <a class="d-stat" href="/kelola/produk">
@@ -123,6 +119,11 @@
             <div><small>Tentang Kami</small><strong>Kelola Tentang Kami</strong><em>ubah teks, foto, dan tim</em></div>
             <span class="d-arrow">›</span>
           </a>
+          <a class="d-stat" href="/kelola/kebijakan">
+            <span class="d-ico">§</span>
+            <div><small>Kebijakan</small><strong>Kelola Kebijakan</strong><em>ubah syarat dan privasi</em></div>
+            <span class="d-arrow">›</span>
+          </a>
           <% } %>
           <a class="d-stat" href="/admin/pesanan">
             <span class="d-ico">◈</span>
@@ -130,7 +131,6 @@
             <span class="d-arrow">›</span>
           </a>
         </div>
-
 
         <h2 class="d-judul">Aksi Cepat</h2>
         <div class="d-aksi">
@@ -140,9 +140,9 @@
           <% if (role === 'admin') { %>
           <a class="d-btn-detail" href="/kelola/artikel">Kelola Artikel</a>
           <a class="d-btn-detail" href="/kelola/tentang">Kelola Tentang Kami</a>
+          <a class="d-btn-detail" href="/kelola/kebijakan">Kelola Kebijakan</a>
           <% } %>
         </div>
-
 
         <div class="d-judul-row">
           <h2 class="d-judul">Pesanan Masuk</h2>
@@ -169,7 +169,6 @@
           <div class="d-kosong">Belum ada pesanan masuk. Pesanan pelanggan akan muncul di sini.</div>
         <% } %>
 
-
         <div class="d-judul-row">
           <h2 class="d-judul">Produk Terbaru</h2>
           <a href="/kelola/produk">Kelola Katalog →</a>
@@ -186,7 +185,6 @@
         <% } %>
       </div>
 
-
       <aside class="d-right">
         <section class="d-card">
           <h3 class="t">Ringkasan Pesanan</h3>
@@ -199,7 +197,6 @@
           </div>
         </section>
 
-
         <section class="d-card">
           <h3 class="t">Katalog per Kategori</h3>
           <% perKategori.forEach(k => { %>
@@ -210,7 +207,6 @@
             </div>
           <% }) %>
         </section>
-
 
         <section class="d-card">
           <div class="d-akt-head"><h3>Aktivitas Terbaru</h3><a href="/admin/pesanan">Lihat Semua →</a></div>
@@ -230,12 +226,10 @@
       </aside>
     </div>
 
-
 <% } else { %>
     <!-- =================== PELANGGAN =================== -->
     <div class="d-cols">
       <div class="d-left">
-
 
         <section class="d-welcome">
           <div>
@@ -245,7 +239,6 @@
           </div>
           <div class="d-banner"><img src="/images/hero.jpg" alt="Foura Creative"></div>
         </section>
-
 
         <div class="d-stats">
           <a class="d-stat" href="<%= paket ? '/riwayat' : '/katalog' %>">
@@ -266,7 +259,6 @@
             <span class="d-arrow">›</span>
           </a>
         </div>
-
 
         <h2 class="d-judul">Pesanan Terbaru</h2>
         <% if (pesanan.length) { %>
@@ -295,7 +287,6 @@
           </div>
         <% } %>
 
-
         <h2 class="d-judul">Progress Pekerjaan<% if (progressKode) { %> <small>· <%= progressKode %></small><% } %></h2>
         <section class="d-card">
           <% if (progress) { %>
@@ -318,7 +309,6 @@
           <% } %>
         </section>
       </div>
-
 
       <aside class="d-right">
         <section class="d-card">
@@ -343,7 +333,6 @@
           <% } %>
         </section>
 
-
         <section class="d-help">
           <img src="/images/konsultasi-rutin.jpg" alt="">
           <div>
@@ -353,7 +342,6 @@
             <a class="d-btn" href="https://wa.me/62812xxxxxxxx" target="_blank" rel="noopener">Hubungi Kami</a>
           </div>
         </section>
-
 
         <section class="d-card">
           <div class="d-akt-head"><h3>Riwayat Aktivitas</h3><a href="/riwayat">Lihat Semua →</a></div>
@@ -376,7 +364,6 @@
   </main>
 </div>
 
-
 <!-- DIALOG KELUAR -->
 <dialog id="dlgKeluar" class="d-dialog">
   <button type="button" class="d-x" id="btnBatalX" aria-label="Tutup">×</button>
@@ -388,7 +375,6 @@
     <form method="POST" action="/keluar"><button type="submit" class="d-btn">Keluar</button></form>
   </div>
 </dialog>
-
 
 <script>
   const dlg = document.getElementById('dlgKeluar');

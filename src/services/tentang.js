@@ -39,6 +39,8 @@ const DEFAULT = {
   ],
 };
 
+const { Op } = require('sequelize');
+
 // Kunci teks yang berisi gambar (bisa diunggah dari admin)
 const KUNCI_GAMBAR = ['hero_gambar', 'cerita_gambar', 'nilai_gambar'];
 
@@ -160,7 +162,34 @@ async function hapusItem(id) {
   await TentangItem.destroy({ where: { id } });
 }
 
+const JUDUL_BAGIAN = { keunggulan: 'Keunggulan', tim: 'Tim Kami', nilai: 'Nilai & Visi' };
+
+async function ambilItem(id) {
+  await siapkan();
+  return TentangItem.findByPk(id, { raw: true });
+}
+
+// Kembalikan semua teks & gambar halaman ke bawaan
+async function resetTeks() {
+  await siapkan();
+  for (const [kunci, nilai] of Object.entries(DEFAULT_TEKS)) {
+    await TentangTeks.update({ nilai }, { where: { kunci } });
+  }
+  await TentangGambar.destroy({ where: { kunci: { [Op.like]: 'teks-%' } } });
+}
+
+// Hapus semua item pada satu bagian (beserta fotonya di database)
+async function hapusBagian(jenis) {
+  await siapkan();
+  if (!JUDUL_BAGIAN[jenis]) return;
+  const daftar = await TentangItem.findAll({ where: { jenis }, attributes: ['id'], raw: true });
+  const ids = daftar.map((d) => d.id);
+  if (!ids.length) return;
+  await TentangGambar.destroy({ where: { kunci: ids.map((i) => 'item-' + i) } });
+  await TentangItem.destroy({ where: { id: ids } });
+}
+
 module.exports = {
-  DEFAULT, DEFAULT_TEKS, siapkan, ambilTentang, simpanTeks, simpanGambarTeks,
-  tambahItem, ubahItem, hapusItem, ambilGambar,
+  DEFAULT, DEFAULT_TEKS, JUDUL_BAGIAN, siapkan, ambilTentang, simpanTeks, simpanGambarTeks,
+  tambahItem, ubahItem, hapusItem, ambilGambar, ambilItem, resetTeks, hapusBagian,
 };

@@ -1,110 +1,44 @@
-<%- include('../partials/dash-header', { aktif: 'artikel', judul: 'Kelola Tentang Kami' }) %>
-
+<%- include('../partials/dash-header', { aktif: 'tentang', judul: 'Kelola Tentang Kami' }) %>
 <%
-const LABEL = {
-  hero_judul: 'Hero: judul (kata miring marun: *kata*)', hero_teks: 'Hero: paragraf',
-  cerita_judul: 'Cerita: judul', cerita_1: 'Cerita: paragraf 1', cerita_2: 'Cerita: paragraf 2',
-  cerita_tombol: 'Cerita: teks tombol',
-  tim_judul: 'Tim: judul', tim_teks: 'Tim: paragraf',
-  nilai_judul: 'Nilai: judul',
-  cta_eyebrow: 'Ajakan: teks kecil', cta_judul: 'Ajakan: judul', cta_tombol: 'Ajakan: teks tombol',
-};
-const PANJANG = ['hero_teks', 'cerita_1', 'cerita_2', 'tim_teks'];
-const GAMBAR = {
-  hero_gambar: 'Hero: gambar latar',
-  cerita_gambar: 'Cerita: gambar',
-  nilai_gambar: 'Nilai: gambar',
-};
-const GRUP = [['keunggulan', 'Keunggulan'], ['tim', 'Tim kami'], ['nilai', 'Nilai & visi']];
+const BARIS = [
+  { nama: 'Teks & gambar halaman', isi: 'Hero, cerita, ajakan, dan gambar latar',
+    ubah: '/kelola/tentang/teks/edit', hapus: '/kelola/tentang/teks/reset',
+    tanya: 'Kembalikan semua teks dan gambar halaman ke bawaan?' },
+  { nama: 'Keunggulan', isi: T.keunggulan.length + ' item',
+    ubah: '/kelola/tentang/bagian/keunggulan', hapus: '/kelola/tentang/bagian/keunggulan/hapus',
+    tanya: 'Hapus SEMUA item Keunggulan?' },
+  { nama: 'Tim Kami', isi: T.tim.length + ' anggota',
+    ubah: '/kelola/tentang/bagian/tim', hapus: '/kelola/tentang/bagian/tim/hapus',
+    tanya: 'Hapus SEMUA anggota Tim Kami?' },
+  { nama: 'Nilai & Visi', isi: T.nilai.length + ' item',
+    ubah: '/kelola/tentang/bagian/nilai', hapus: '/kelola/tentang/bagian/nilai/hapus',
+    tanya: 'Hapus SEMUA item Nilai & Visi?' },
+];
 %>
-
-<section class="form-wrap wide">
+<section class="page">
   <h1>Kelola Tentang Kami</h1>
   <% if (ok) { %><p class="bantuan" style="color:#2f7a45">Tersimpan.</p><% } %>
   <% if (err) { %><p class="err"><%= err %></p><% } %>
 
-  <form method="post" action="/kelola/tentang/teks" enctype="multipart/form-data" class="form kartu">
-    <h3>Teks &amp; gambar halaman</h3>
-
-    <% Object.keys(LABEL).forEach(k => { %>
-      <label><%= LABEL[k] %>
-        <% if (PANJANG.includes(k)) { %>
-          <textarea name="<%= k %>" rows="3"><%= T.teks[k] %></textarea>
-        <% } else { %>
-          <input name="<%= k %>" value="<%= T.teks[k] %>">
-        <% } %>
-      </label>
-    <% }) %>
-
-    <% Object.keys(GAMBAR).forEach(k => { %>
-      <div style="display:flex;flex-direction:column;gap:.5rem">
-        <label><%= GAMBAR[k] %> <span class="bantuan">(pilih file JPG/PNG/WEBP, maks. 2 MB, boleh kosong)</span>
-          <input type="file" name="<%= k %>_file" accept="image/jpeg,image/png,image/webp">
-        </label>
-        <% if (T.teks[k]) { %>
-          <img src="<%= T.teks[k] %>" alt="Gambar saat ini" style="max-width:200px;border-radius:12px;display:block" onerror="this.style.display='none'">
-          <label style="flex-direction:row;align-items:center;gap:.5rem;font-size:.9rem">
-            <input type="checkbox" name="hapus_<%= k %>"> Hapus gambar ini (kembali ke gambar bawaan)
-          </label>
-        <% } %>
-      </div>
-    <% }) %>
-
-    <button class="btn" type="submit">Simpan teks &amp; gambar</button>
-  </form>
-
-  <% GRUP.forEach(([jenis, nama]) => { %>
-    <div class="kartu" style="margin-top:1.2rem">
-      <h3><%= nama %></h3>
-
-      <% T[jenis].forEach(it => { %>
-        <form method="post" action="/kelola/tentang/item/<%= it.id %>" enctype="multipart/form-data" class="form" style="border-bottom:1px solid var(--line);padding-bottom:1rem">
-          <div class="dua">
-            <label>Judul / nama <input name="judul" value="<%= it.judul %>" required></label>
-            <label>Urutan <input name="urutan" type="number" value="<%= it.urutan %>"></label>
-          </div>
-          <label>Teks / jabatan <textarea name="teks" rows="2"><%= it.teks || '' %></textarea></label>
-          <% if (jenis === 'keunggulan') { %>
-            <label>Ikon <span class="bantuan">(bulb, users, chart, heart)</span> <input name="ikon" value="<%= it.ikon || '' %>"></label>
-          <% } %>
-          <% if (jenis === 'tim') { %>
-            <div style="display:flex;flex-direction:column;gap:.5rem">
-              <label>Foto <span class="bantuan">(pilih file JPG/PNG/WEBP, maks. 2 MB, boleh kosong)</span>
-                <input type="file" name="foto_file" accept="image/jpeg,image/png,image/webp">
-              </label>
-              <input type="hidden" name="foto" value="<%= it.foto || '' %>">
-              <% if (it.foto) { %>
-                <img src="<%= it.foto %>" alt="Foto saat ini" style="width:70px;height:70px;object-fit:cover;border-radius:50%;display:block" onerror="this.style.display='none'">
-                <label style="flex-direction:row;align-items:center;gap:.5rem;font-size:.9rem">
-                  <input type="checkbox" name="hapus_foto"> Hapus foto ini
-                </label>
-              <% } %>
-            </div>
-          <% } %>
-          <div style="display:flex;gap:.5rem">
-            <button class="btn sm" type="submit">Simpan</button>
-            <button class="btn sm bahaya" type="submit" formaction="/kelola/tentang/item/<%= it.id %>/hapus" onclick="return confirm('Hapus item ini?')">Hapus</button>
-          </div>
-        </form>
-      <% }) %>
-
-      <form method="post" action="/kelola/tentang/item/tambah/<%= jenis %>" enctype="multipart/form-data" class="form">
-        <b>Tambah baru</b>
-        <div class="dua">
-          <label>Judul / nama <input name="judul" required></label>
-          <label>Urutan <input name="urutan" type="number" value="<%= T[jenis].length + 1 %>"></label>
-        </div>
-        <label>Teks / jabatan <textarea name="teks" rows="2"></textarea></label>
-        <% if (jenis === 'keunggulan') { %><label>Ikon <input name="ikon" placeholder="bulb"></label><% } %>
-        <% if (jenis === 'tim') { %>
-          <label>Foto <span class="bantuan">(pilih file JPG/PNG/WEBP, maks. 2 MB, boleh kosong)</span>
-            <input type="file" name="foto_file" accept="image/jpeg,image/png,image/webp">
-          </label>
-        <% } %>
-        <button class="btn sm" type="submit">Tambah</button>
-      </form>
-    </div>
-  <% }) %>
+  <div class="scroll-x">
+    <table class="tabel">
+      <thead><tr><th>Bagian</th><th>Isi</th><th>Aksi</th></tr></thead>
+      <tbody>
+        <% BARIS.forEach(b => { %>
+          <tr>
+            <td><b><%= b.nama %></b></td>
+            <td class="muted"><%= b.isi %></td>
+            <td class="aksi-sel">
+              <a class="btn sm ghost" href="/tentang" target="_blank" rel="noopener">Lihat</a>
+              <a class="btn sm ghost" href="<%= b.ubah %>">Ubah</a>
+              <form method="post" action="<%= b.hapus %>" onsubmit="return confirm('<%= b.tanya %>')">
+                <button type="submit" class="btn sm bahaya">Hapus</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
 </section>
-
 <%- include('../partials/dash-footer') %>

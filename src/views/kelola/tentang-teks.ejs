@@ -1,0 +1,51 @@
+<%- include('../partials/dash-header', { aktif: 'tentang', judul: 'Ubah Teks & Gambar' }) %>
+<%
+const LABEL = {
+  hero_judul: 'Hero: judul (kata miring marun: *kata*)', hero_teks: 'Hero: paragraf',
+  cerita_judul: 'Cerita: judul', cerita_1: 'Cerita: paragraf 1', cerita_2: 'Cerita: paragraf 2',
+  cerita_tombol: 'Cerita: teks tombol',
+  tim_judul: 'Tim: judul', tim_teks: 'Tim: paragraf',
+  nilai_judul: 'Nilai: judul',
+  cta_eyebrow: 'Ajakan: teks kecil', cta_judul: 'Ajakan: judul', cta_tombol: 'Ajakan: teks tombol',
+};
+const PANJANG = ['hero_teks', 'cerita_1', 'cerita_2', 'tim_teks'];
+const GAMBAR = {
+  hero_gambar: 'Hero: gambar latar',
+  cerita_gambar: 'Cerita: gambar',
+  nilai_gambar: 'Nilai: gambar',
+};
+%>
+<section class="form-wrap wide">
+  <p><a href="/kelola/tentang">← Kembali ke Kelola Tentang Kami</a></p>
+  <h1>Ubah Teks &amp; Gambar</h1>
+  <% if (err) { %><p class="err"><%= err %></p><% } %>
+
+  <form method="post" action="/kelola/tentang/teks" enctype="multipart/form-data" class="form kartu">
+    <% Object.keys(LABEL).forEach(k => { %>
+      <label><%= LABEL[k] %>
+        <% if (PANJANG.includes(k)) { %>
+          <textarea name="<%= k %>" rows="3"><%= T.teks[k] %></textarea>
+        <% } else { %>
+          <input name="<%= k %>" value="<%= T.teks[k] %>">
+        <% } %>
+      </label>
+    <% }) %>
+
+    <% Object.keys(GAMBAR).forEach(k => { %>
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <label><%= GAMBAR[k] %> <span class="bantuan">(pilih file JPG/PNG/WEBP, maks. 2 MB, boleh kosong)</span>
+          <input type="file" name="<%= k %>_file" accept="image/jpeg,image/png,image/webp">
+        </label>
+        <% if (T.teks[k]) { %>
+          <img src="<%= T.teks[k] %>" alt="Gambar saat ini" style="max-width:200px;border-radius:12px;display:block" onerror="this.style.display='none'">
+          <label style="flex-direction:row;align-items:center;gap:.5rem;font-size:.9rem">
+            <input type="checkbox" name="hapus_<%= k %>"> Hapus gambar ini (kembali ke gambar bawaan)
+          </label>
+        <% } %>
+      </div>
+    <% }) %>
+
+    <button class="btn" type="submit">Simpan</button>
+  </form>
+</section>
+<%- include('../partials/dash-footer') %>

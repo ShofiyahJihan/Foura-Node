@@ -1,0 +1,52 @@
+<%- include('../partials/dash-header', { judul: 'Kelola Kebijakan' }) %>
+<section class="page">
+  <h1><%= bagian ? 'Ubah Bagian' : 'Tambah Bagian' %></h1>
+  <p class="muted">Halaman: <%= HALAMAN[halaman] %></p>
+  <% if (ok) { %><p class="bantuan" style="color:#2f7a45">Tersimpan.</p><% } %>
+  <% if (err) { %><p class="err"><%= err %></p><% } %>
+
+  <form method="post" action="<%= bagian ? '/kelola/kebijakan/bagian/' + bagian.id : '/kelola/kebijakan/bagian/tambah' %>" style="max-width:640px">
+    <% if (!bagian) { %><input type="hidden" name="halaman" value="<%= halaman %>"><% } %>
+    <label>Judul bagian
+      <input type="text" name="judul" required maxlength="150" value="<%= bagian ? bagian.judul : '' %>" style="width:100%">
+    </label>
+    <label>Urutan (kosongkan untuk ditaruh paling akhir)
+      <input type="number" name="urutan" min="0" value="<%= bagian ? bagian.urutan : '' %>">
+    </label>
+    <p>
+      <button type="submit" class="btn">Simpan</button>
+      <a class="btn ghost" href="/kelola/kebijakan">Kembali</a>
+    </p>
+  </form>
+
+  <% if (bagian) { %>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:32px 0 12px">
+      <h2 style="margin:0">Butir</h2>
+      <a class="btn sm" href="/kelola/kebijakan/bagian/<%= bagian.id %>/butir/baru">+ Tambah Butir</a>
+    </div>
+    <div class="scroll-x">
+      <table class="tabel">
+        <thead><tr><th>Urutan</th><th>Judul</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <% if (!bagian.butir.length) { %>
+            <tr><td colspan="3" class="muted">Belum ada butir.</td></tr>
+          <% } %>
+          <% bagian.butir.forEach(t => { %>
+            <tr>
+              <td><%= t.urutan %></td>
+              <td><b><%= t.judul %></b></td>
+              <td class="aksi-sel">
+                <a class="btn sm ghost" href="/kelola/kebijakan/butir/<%= t.id %>/edit">Ubah</a>
+                <form method="post" action="/kelola/kebijakan/butir/<%= t.id %>/hapus"
+                      onsubmit="return confirm('Hapus butir ini?')">
+                  <button type="submit" class="btn sm bahaya">Hapus</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+<%- include('../partials/dash-footer') %>

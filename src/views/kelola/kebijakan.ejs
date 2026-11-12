@@ -1,0 +1,41 @@
+<%- include('../partials/dash-header', { judul: 'Kelola Kebijakan' }) %>
+<section class="page">
+  <h1>Kelola Kebijakan</h1>
+  <% if (ok) { %><p class="bantuan" style="color:#2f7a45">Tersimpan.</p><% } %>
+  <% if (err) { %><p class="err"><%= err %></p><% } %>
+
+  <% Object.keys(HALAMAN).forEach(h => { %>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:28px 0 12px">
+      <h2 style="margin:0"><%= HALAMAN[h] %></h2>
+      <div>
+        <a class="btn sm ghost" href="/<%= h %>" target="_blank" rel="noopener">Lihat</a>
+        <a class="btn sm" href="/kelola/kebijakan/bagian/baru?halaman=<%= h %>">+ Tambah Bagian</a>
+      </div>
+    </div>
+    <div class="scroll-x">
+      <table class="tabel">
+        <thead><tr><th>Urutan</th><th>Bagian</th><th>Butir</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <% if (!semua[h].length) { %>
+            <tr><td colspan="4" class="muted">Belum ada bagian.</td></tr>
+          <% } %>
+          <% semua[h].forEach(b => { %>
+            <tr>
+              <td><%= b.urutan %></td>
+              <td><b><%= b.judul %></b></td>
+              <td class="muted"><%= b.butir.length %> butir</td>
+              <td class="aksi-sel">
+                <a class="btn sm ghost" href="/kelola/kebijakan/bagian/<%= b.id %>/edit">Ubah</a>
+                <form method="post" action="/kelola/kebijakan/bagian/<%= b.id %>/hapus"
+                      onsubmit="return confirm('Hapus bagian ini beserta semua butirnya?')">
+                  <button type="submit" class="btn sm bahaya">Hapus</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% }) %>
+</section>
+<%- include('../partials/dash-footer') %>

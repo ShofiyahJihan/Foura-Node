@@ -1,0 +1,23 @@
+<%- include('../partials/dash-header', { judul: 'Kelola Kebijakan' }) %>
+<section class="page">
+  <h1><%= butir ? 'Ubah Butir' : 'Tambah Butir' %></h1>
+  <p class="muted">Bagian: <%= bagian.judul %></p>
+  <% if (err) { %><p class="err"><%= err %></p><% } %>
+
+  <form method="post" action="<%= butir ? '/kelola/kebijakan/butir/' + butir.id : '/kelola/kebijakan/bagian/' + bagian.id + '/butir' %>" style="max-width:720px">
+    <label>Judul butir
+      <input type="text" name="judul" required maxlength="150" value="<%= butir ? butir.judul : '' %>" style="width:100%">
+    </label>
+    <label>Isi
+      <textarea name="isi" rows="8" required style="width:100%"><%= butir ? butir.isi : '' %></textarea>
+    </label>
+    <label>Urutan (kosongkan untuk ditaruh paling akhir)
+      <input type="number" name="urutan" min="0" value="<%= butir ? butir.urutan : '' %>">
+    </label>
+    <p>
+      <button type="submit" class="btn">Simpan</button>
+      <a class="btn ghost" href="/kelola/kebijakan/bagian/<%= bagian.id %>/edit">Kembali</a>
+    </p>
+  </form>
+</section>
+<%- include('../partials/dash-footer') %>

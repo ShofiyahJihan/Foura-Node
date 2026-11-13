@@ -1,9 +1,35 @@
 <%- include('../partials/header') %>
 <link rel="stylesheet" href="/css/artikel-detail.css">
 
+<%
+  // Ubah teks jadi HTML aman. Yang jadi link hanya:
+  //   [teks](https://alamat.com)  atau  [teks](/halaman-internal)
+  //   alamat https://... yang ditempel langsung
+  const esc = s => String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  const tautan = (s) => {
+    s = String(s || '');
+    const re = /\[([^\]]+)\]\(((?:https?:\/\/|\/(?!\/))[^\s)]+)\)|(https?:\/\/[^\s<]+[^\s<.,;:!?)])/g;
+    let hasil = '', akhir = 0, m;
+    while ((m = re.exec(s))) {
+      hasil += esc(s.slice(akhir, m.index));
+      const url = m[2] || m[3];
+      const teks = m[1] || m[3];
+      const luar = /^https?:/i.test(url);
+      hasil += '<a href="' + esc(url) + '"' +
+        (luar ? ' target="_blank" rel="noopener noreferrer"' : '') +
+        '>' + esc(teks) + '</a>';
+      akhir = re.lastIndex;
+    }
+    return hasil + esc(s.slice(akhir));
+  };
+%>
+
 <style>
-  /* Tombol aksi (suka & komentar) */
-  .aksi-bar { display: flex; align-items: center; gap: 12px; }
+  /* Tombol aksi (suka, komentar, bagikan) */
+  .aksi-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .aksi-btn {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 8px 16px; border: 0; border-radius: 999px;
@@ -20,6 +46,17 @@
   .aksi-btn.suka.aktif svg { fill: currentColor; }
   .aksi-btn.suka.pop svg { animation: pop .3s ease; }
   @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.35); } 100% { transform: scale(1); } }
+
+  /* Bagikan */
+  .bagikan { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+  .bagikan small { color: #8a7a7e; }
+  .bagikan .aksi-btn { font-size: .95rem; padding: 8px 14px; border: 1px solid rgba(107, 31, 58, .25); }
+  .bagikan .aksi-btn svg { width: 18px; height: 18px; }
+  .bagikan .aksi-btn.ok { background: #6b1f3a; color: #fff; }
+
+  /* Link di dalam isi artikel */
+  .dt-teks a { color: #6b1f3a; text-decoration: underline; text-underline-offset: 3px; word-break: break-word; }
+  .dt-teks a:hover { opacity: .75; }
 </style>
 
 <article class="dt-wrap">
@@ -75,17 +112,34 @@
             </svg>
             <span><%= komentar.length %></span>
           </a>
+
+          <!-- Bagikan -->
+          <div class="bagikan" data-judul="<%= a.judul %>">
+            <small>Bagikan:</small>
+            <button type="button" class="aksi-btn" id="btnSalin" aria-label="Salin link artikel">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1 0l3-3a5 5 0 0 0-7.1-7.1l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.1 0l-3 3A5 5 0 0 0 11 21.1l1.7-1.7"/></svg>
+              <span>Salin Link</span>
+            </button>
+            <a class="aksi-btn" id="btnWa" href="#" target="_blank" rel="noopener noreferrer" aria-label="Bagikan ke WhatsApp">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l1.9-5.4A8.4 8.4 0 1 1 21 11.5z"/></svg>
+              <span>WhatsApp</span>
+            </a>
+            <button type="button" class="aksi-btn" id="btnLain" style="display:none" aria-label="Bagikan lewat aplikasi lain">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+              <span>Lainnya</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <div class="dt-teks">
         <% a.isi.forEach(b => { %>
           <% if (b.tipe === 'h2') { %>
-            <h2><%= b.teks %></h2>
+            <h2><%- tautan(b.teks) %></h2>
           <% } else if (b.tipe === 'ul') { %>
-            <ul><% b.item.forEach(i => { %><li><%= i %></li><% }) %></ul>
+            <ul><% b.item.forEach(i => { %><li><%- tautan(i) %></li><% }) %></ul>
           <% } else { %>
-            <p><%= b.teks %></p>
+            <p><%- tautan(b.teks) %></p>
           <% } %>
         <% }) %>
       </div>
@@ -196,7 +250,44 @@
       tombol.disabled = false;
     }
   });
+
+  // Bagikan: salin link, WhatsApp, dan menu bagikan bawaan HP
+  (function () {
+    var box = document.querySelector('.bagikan');
+    if (!box) return;
+    var judul = box.dataset.judul || document.title;
+    var url = location.origin + location.pathname;
+
+    document.getElementById('btnWa').href =
+      'https://wa.me/?text=' + encodeURIComponent(judul + '\n' + url);
+
+    var btnSalin = document.getElementById('btnSalin');
+    var label = btnSalin.querySelector('span');
+    function tandai() {
+      btnSalin.classList.add('ok'); label.textContent = 'Tersalin!';
+      setTimeout(function () { btnSalin.classList.remove('ok'); label.textContent = 'Salin Link'; }, 2000);
+    }
+    btnSalin.addEventListener('click', function () {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url).then(tandai).catch(cadangan);
+      } else { cadangan(); }
+      function cadangan() {
+        var t = document.createElement('textarea');
+        t.value = url; t.style.position = 'fixed'; t.style.opacity = '0';
+        document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); tandai(); } catch (e) { prompt('Salin link ini:', url); }
+        document.body.removeChild(t);
+      }
+    });
+
+    var btnLain = document.getElementById('btnLain');
+    if (navigator.share) {
+      btnLain.style.display = '';
+      btnLain.addEventListener('click', function () {
+        navigator.share({ title: judul, url: url }).catch(function () {});
+      });
+    }
+  })();
 </script>
 
 <%- include('../partials/footer') %>
-

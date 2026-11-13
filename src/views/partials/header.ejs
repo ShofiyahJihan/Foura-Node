@@ -4,6 +4,31 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><%= locals.title ? title + ' — ' : '' %>Foura Creative</title>
+
+  <%
+    // Info pratinjau saat link dibagikan (Open Graph).
+    // Halaman artikel mengirim `og`; halaman lain memakai isian bawaan.
+    const og = locals.og || {};
+    const ogJudul = og.judul || ((locals.title ? title + ' — ' : '') + 'Foura Creative');
+    const ogDeskripsi = og.deskripsi || 'Jasa pengelolaan media sosial untuk UMKM fashion di Makassar. Konten, jadwal posting, sampai laporan performa bulanan.';
+  %>
+  <meta name="description" content="<%= ogDeskripsi %>">
+  <meta property="og:site_name" content="Foura Creative">
+  <meta property="og:type" content="<%= og.tipe || 'website' %>">
+  <meta property="og:locale" content="id_ID">
+  <meta property="og:title" content="<%= ogJudul %>">
+  <meta property="og:description" content="<%= ogDeskripsi %>">
+  <% if (og.url) { %><meta property="og:url" content="<%= og.url %>"><% } %>
+  <% if (og.gambar) { %>
+    <meta property="og:image" content="<%= og.gambar %>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="<%= og.gambar %>">
+  <% } else { %>
+    <meta name="twitter:card" content="summary">
+  <% } %>
+  <meta name="twitter:title" content="<%= ogJudul %>">
+  <meta name="twitter:description" content="<%= ogDeskripsi %>">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
@@ -90,4 +115,3 @@
 
 
 <main>
-

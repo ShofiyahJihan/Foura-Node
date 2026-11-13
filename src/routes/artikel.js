@@ -193,9 +193,19 @@ router.get('/artikel/:slug', async (req, res, next) => {
     const komentar = await ArtikelKomentar.findAll({ where: { artikelId: a.id }, order: [['createdAt', 'DESC']] });
     const lain = await Artikel.findAll({ where: { terbit: true, id: { [Op.ne]: a.id } }, order: [['createdAt', 'DESC']], limit: 3 });
 
+    // Info pratinjau saat link dibagikan (Open Graph)
+    const base = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const mutlak = (u) => (!u ? null : /^https?:\/\//i.test(u) ? u : base + u);
 
     res.render('artikel/detail', {
       title: a.judul,
+      og: {
+        tipe: 'article',
+        judul: a.judul,
+        deskripsi: lengkap.ringkasan,
+        gambar: mutlak(a.gambar),
+        url: base + '/artikel/' + a.slug,
+      },
       a: { ...lengkap, isi: bagian(a.isi), terbit: a.terbit },
       komentar: komentar.map((k) => ({
         id: k.id, nama: k.nama, isi: k.isi, waktu: tanggal(k.createdAt),
@@ -338,4 +348,3 @@ router.post('/kelola/artikel/:id/hapus', adminOnly, async (req, res, next) => {
 
 
 module.exports = router;
-

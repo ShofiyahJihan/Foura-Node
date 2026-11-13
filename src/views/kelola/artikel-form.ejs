@@ -52,10 +52,10 @@
     <label>Isi artikel
       <textarea name="isi" rows="16" required><%= form.isi || '' %></textarea>
     </label>
-    <p class="bantuan">Cara menulis: kosongkan satu baris untuk paragraf baru. Awali baris dengan <b>##</b> untuk subjudul, dan awali dengan <b>-</b> untuk daftar poin.</p>
+    <p class="bantuan">Cara menulis: tekan Enter untuk paragraf baru. Awali baris dengan <b>##</b> untuk subjudul, dan awali dengan <b>-</b> untuk daftar poin.<br>
+    Link: tulis <b>[teks yang tampil](https://alamat-website.com)</b>, atau tempel alamat <b>https://...</b> langsung. Link ke website lain otomatis dibuka di tab baru.</p>
     <label style="flex-direction:row;align-items:center;gap:.6rem"><input type="checkbox" name="terbit" <%= form.terbit ? 'checked' : '' %>> Terbitkan sekarang (hilangkan centang untuk menyimpan sebagai draf)</label>
     <button class="btn">Simpan</button>
   </form>
 </section>
 <%- include('../partials/dash-footer') %>
-

@@ -1827,3 +1827,219 @@ body{background:#f6efeb;color:#2b2320;font-family:'DM Sans',sans-serif}
   .pd-grid{grid-template-columns:1fr;gap:1.6rem}
 }
 
+/* ===== Navbar responsif: menu hamburger ===== */
+.nav-toggle { display: none; }
+
+@media (max-width: 860px) {
+  .nav .nav-pill { position: relative; }
+  .nav .aksi { margin-left: auto; }
+
+  .nav-toggle {
+    display: inline-flex; flex-direction: column; justify-content: center; gap: 5px;
+    width: 42px; height: 42px; padding: 0 11px; margin-left: 8px;
+    border: 0; border-radius: 50%; background: rgba(107, 31, 58, .08);
+    cursor: pointer; flex-shrink: 0;
+  }
+  .nav-toggle span {
+    display: block; height: 2px; border-radius: 2px; background: #6b1f3a;
+    transition: transform .2s, opacity .2s;
+  }
+  .nav.buka .nav-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav.buka .nav-toggle span:nth-child(2) { opacity: 0; }
+  .nav.buka .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Daftar menu: tersembunyi, muncul sebagai kotak di bawah navbar */
+  .nav .links { display: none !important; }
+  .nav.buka .links {
+    display: flex !important; flex-direction: column; gap: 4px;
+    position: absolute; top: calc(100% + 10px); left: 0; right: 0;
+    padding: 12px; border-radius: 24px;
+    background: #fffafa; box-shadow: 0 12px 32px rgba(60, 20, 35, .15);
+    z-index: 50;
+  }
+  .nav.buka .links a { display: block; padding: 12px 16px; border-radius: 14px; }
+  .nav.buka .links a:hover,
+  .nav.buka .links a.active { background: rgba(107, 31, 58, .08); }
+}
+
+/* HP sempit: sembunyikan tombol Masuk, sisakan Daftar */
+@media (max-width: 480px) {
+  .nav .brand-name { font-size: 1rem; }
+  .nav .aksi .btn-outline { display: none; }
+}
+
+/* ===== Katalog: tetap 2 kolom di HP ===== */
+@media (max-width: 600px) {
+  .kp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0 28px; }
+
+  .kp { border-radius: 14px; }
+  .kp-gambar { height: 120px; }
+  .kp-label { top: 8px; right: 8px; font-size: 10px; padding: 3px 9px; }
+
+  .kp-isi { padding: 12px 12px 14px; }
+  .kp-badge { font-size: 10px; padding: 3px 9px; margin-bottom: 8px; }
+  .kp h3 { font-size: 1rem; line-height: 1.25; }
+  .kp-desk { font-size: .8rem; line-height: 1.45; margin-bottom: 8px; }
+  .kp-fitur li { font-size: .78rem; padding-left: 18px; margin-bottom: 4px; }
+  .kp-catatan, .kp-waktu { font-size: .75rem; margin-bottom: 8px; }
+  .kp-harga { font-size: 1.15rem; margin-bottom: 10px; }
+  .kp-harga small { font-size: .7rem; }
+
+  .kp-btn { padding: 8px 6px; font-size: .8rem; }
+  .kp-ok { flex-wrap: wrap; justify-content: center; gap: 4px; padding: 8px 10px; font-size: .78rem; }
+  .kp-batal { font-size: .75rem; }
+}
+
+/* HP sangat kecil (di bawah 360px): lebih rapat lagi */
+@media (max-width: 360px) {
+  .kp-grid { gap: 8px; }
+  .kp-gambar { height: 100px; }
+  .kp-isi { padding: 10px; }
+  .kp h3 { font-size: .92rem; }
+}
+
+/* ===== Keranjang: tampilan layar kecil ===== */
+@media (max-width: 900px) {
+  .kr-item {
+    display: grid;
+    grid-template-columns: 24px 72px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "cek gbr info hapus"
+      "qty qty qty sub";
+    align-items: center;
+    gap: 10px 12px;
+    padding: 12px;
+  }
+  .kr-item > .pilih-item { grid-area: cek; }
+  .kr-item > img,
+  .kr-item > .kr-ph { grid-area: gbr; width: 72px; height: 60px; }
+  .kr-item > .kr-info { grid-area: info; min-width: 0; }
+  .kr-item > .kr-info h3 { font-size: .95rem; line-height: 1.3; }
+  .kr-item > form { grid-area: hapus; align-self: start; justify-self: end; margin: 0; }
+  .kr-item > .kr-qty { grid-area: qty; }
+  .kr-item > .kr-sub { grid-area: sub; min-width: 0; text-align: right; font-size: .95rem; }
+}
+
+/* ===== Footer HP: Navigasi dan Hubungi Kami berdampingan ===== */
+@media (max-width: 800px) {
+  .ft-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 20px;
+    padding: 32px 0 24px;
+  }
+  .ft-brand { grid-column: 1 / -1; }
+  .ft-brand p { max-width: none; line-height: 1.7; }
+  .ft-logo { width: 52px; height: 52px; margin-bottom: 12px; }
+
+  .ft h4 { margin-bottom: 14px; }
+  .ft li { margin-bottom: 10px; font-size: .92rem; }
+  .ft-kontak li { gap: 8px; font-size: .85rem; word-break: break-word; }
+}
+
+/* HP sangat sempit: kembali satu kolom supaya nomor WhatsApp tidak terpotong */
+@media (max-width: 360px) {
+  .ft-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== Dashboard: tidak boleh melebar di layar kecil ===== */
+
+@media (max-width: 1100px) {
+  .d-cols { grid-template-columns: minmax(0, 1fr); }
+  .d-left, .d-right { min-width: 0; }
+}
+
+@media (max-width: 800px) {
+  .d-app { grid-template-columns: minmax(0, 1fr); }
+  .d-main { min-width: 0; overflow-x: hidden; }
+
+  /* sidebar jadi blok di atas, menu 2 kolom supaya rapi */
+  .d-side { padding: 16px; }
+  .d-brand { margin-bottom: 14px; }
+  .d-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .d-menu a, .d-menu button { padding: 10px 12px; font-size: .85rem; min-width: 0; }
+
+  /* bar atas: pencarian turun ke baris sendiri */
+  .d-top { flex-wrap: wrap; }
+  .d-search { order: 2; flex-basis: 100%; max-width: none; }
+  .d-chip > div { display: none; }
+
+  .d-welcome h1 { font-size: 1.8rem; }
+  .d-banner { height: 130px; }
+
+  /* tabel hanya scroll di dalam kotaknya */
+  .d-tabel-wrap { max-width: 100%; overflow-x: auto; }
+  .d-aksi { gap: 8px; }
+}
+
+/* ===== Tabel Kelola jadi kartu di HP ===== */
+@media (max-width: 800px) {
+  .tabel, .tabel tbody, .tabel tr, .tabel td { display: block; width: 100%; }
+  .tabel thead { display: none; }
+  .tabel { background: transparent; border: 0; }
+
+  .tabel tr {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+    .tabel td {
+    border: 0;
+    padding: 6px 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    text-align: right;
+    word-break: break-word;
+  }
+  /* label kolom diambil dari urutan kolom */
+  .tabel td::before {
+    content: attr(data-label);
+    font-size: .75rem;
+    font-weight: 600;
+    color: var(--maroon);
+    text-align: left;
+    flex-shrink: 0;
+  }
+  .tabel td:first-child { display: block; text-align: left; font-size: 1rem; }
+  .tabel td:first-child::before { content: none; }
+
+  .tabel td.aksi-sel {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: .4rem;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    margin-top: 6px;
+  }
+  .tabel td.aksi-sel::before { content: none; }
+  .tabel td.aksi-sel .btn, .tabel td.aksi-sel form { margin-right: 0; }
+}
+
+/* ===== Tabel Kelola di HP: judul tebal kiri, nilai kanan + gambar lebih besar ===== */
+@media (max-width: 800px) {
+  .tabel td:empty { display: none; }
+
+  .tabel td:has(> b) {
+    display: block;
+    text-align: left;
+    font-size: 1rem;
+  }
+  .tabel td:has(> b)::before { content: none; }
+
+  /* gambar produk lebih besar */
+  .tabel img.thumb {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+  .tabel td:has(> img.thumb) {
+    display: block;
+    text-align: left;
+    padding-bottom: 8px;
+  }
+  .tabel td:has(> img.thumb)::before { content: none; }
+}

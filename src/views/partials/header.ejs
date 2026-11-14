@@ -6,8 +6,6 @@
   <title><%= locals.title ? title + ' — ' : '' %>Foura Creative</title>
 
   <%
-    // Info pratinjau saat link dibagikan (Open Graph).
-    // Halaman artikel mengirim `og`; halaman lain memakai isian bawaan.
     const og = locals.og || {};
     const ogJudul = og.judul || ((locals.title ? title + ' — ' : '') + 'Foura Creative');
     const ogDeskripsi = og.deskripsi || 'Jasa pengelolaan media sosial untuk UMKM fashion di Makassar. Konten, jadwal posting, sampai laporan performa bulanan.';
@@ -47,7 +45,7 @@
     </a>
 
 
-    <nav class="links">
+    <nav class="links" id="navLinks">
       <a href="/" class="<%= path === '/' ? 'active' : '' %>">Beranda</a>
       <a href="/katalog" class="<%= path.startsWith('/katalog') || path.startsWith('/produk') ? 'active' : '' %>">Katalog Layanan</a>
       <a href="/artikel" class="<%= path.startsWith('/artikel') ? 'active' : '' %>">Artikel</a>
@@ -87,6 +85,11 @@
       <% } %>
     </div>
 
+    <!-- Tombol menu (hanya tampil di layar kecil) -->
+    <button type="button" class="nav-toggle" id="navToggle" aria-label="Buka menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+
 
   </div>
 </header>
@@ -102,12 +105,27 @@
     badge.hidden = jumlah <= 0;
   };
 
-
-  // Alternatif: cukup kirim event dari file JS mana pun
-  // document.dispatchEvent(new CustomEvent('keranjang:update', { detail: { jumlah: 3 } }));
   document.addEventListener('keranjang:update', function (e) {
     window.updateCartBadge(e.detail && e.detail.jumlah);
   });
+
+  // Menu hamburger
+  (function () {
+    var nav = document.getElementById('nav');
+    var btn = document.getElementById('navToggle');
+    if (!nav || !btn) return;
+    function atur(buka) {
+      nav.classList.toggle('buka', buka);
+      btn.setAttribute('aria-expanded', buka ? 'true' : 'false');
+      btn.setAttribute('aria-label', buka ? 'Tutup menu' : 'Buka menu');
+    }
+    btn.addEventListener('click', function () { atur(!nav.classList.contains('buka')); });
+    document.querySelectorAll('#navLinks a').forEach(function (a) {
+      a.addEventListener('click', function () { atur(false); });
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') atur(false); });
+    window.addEventListener('resize', function () { if (window.innerWidth > 860) atur(false); });
+  })();
 </script>
 
 

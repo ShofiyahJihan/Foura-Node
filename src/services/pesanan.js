@@ -16,6 +16,10 @@ const Pesanan = sequelize.define('Pesanan', {
   kode:          { type: DataTypes.STRING, unique: true },
   userId:        { type: DataTypes.INTEGER, allowNull: false },
   namaPelanggan: { type: DataTypes.STRING, defaultValue: '' },
+  no_hp:         { type: DataTypes.STRING(20), allowNull: true },
+  status_bayar:      { type: DataTypes.STRING(30), allowNull: true },
+  metode_bayar:      { type: DataTypes.STRING(30), allowNull: true },
+  midtrans_order_id: { type: DataTypes.STRING(60), allowNull: true },
   total:         { type: DataTypes.INTEGER, defaultValue: 0 },
   status:        { type: DataTypes.STRING, defaultValue: 'menunggu' },
   tahap:         { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -93,7 +97,7 @@ async function dataUser(userId) {
     const it = per[p.id] || [];
     return {
       id: p.id, kode: p.kode, judul: judulPesanan(it), tanggal: fmt(p.createdAt),
-     harga: p.total, satuan: it.length === 1 ? (it[0].satuan || '') : '', status: p.status, gambar: (it[0] && it[0].gambar) || '',
+      harga: p.total, satuan: it.length === 1 ? (it[0].satuan || '') : '', status: p.status, gambar: (it[0] && it[0].gambar) || '',
     };
   });
 
@@ -131,7 +135,7 @@ async function dataAdmin() {
   return {
     pesananBaru: semua.filter(p => p.status === 'menunggu').length,
     pesananMasuk: terbaru.map(p => ({
-      kode: p.kode, pelanggan: p.namaPelanggan, layanan: judulPesanan(per[p.id]), total: p.total, status: p.status,
+      kode: p.kode, pelanggan: p.namaPelanggan, wa: p.no_hp || '', layanan: judulPesanan(per[p.id]), total: p.total, status: p.status,
     })),
     ringkasan: {
       nilai: bulanIni.reduce((s, p) => s + p.total, 0),
@@ -153,4 +157,3 @@ module.exports = {
   Keranjang, Pesanan, PesananItem, TAHAP, LABEL_STATUS,
   pastikanTabel, fmt, fmtPendek, judulPesanan, itemPerPesanan, dataUser, dataAdmin,
 };
-

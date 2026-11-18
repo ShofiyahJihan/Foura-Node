@@ -7,7 +7,7 @@ const { pastikanTabel, dataUser, dataAdmin } = require('../services/pesanan');
 router.use(pesananRouter.localsKeranjang);
 const { ambilHalaman } = require('../services/kebijakan');
 const { ambilTentang } = require('../services/tentang');
-
+const { statusKuota } = require('../services/kuota');
 
 // "Pro" dan "Paket Pro" dianggap produk yang sama
 const norm = s => String(s).toLowerCase().replace(/^paket\s+/, '').trim();
@@ -124,7 +124,8 @@ router.get('/katalog', async (req, res, next) => {
     });
 
     const sections = aktif ? semuaKategori.filter(k => k.id === aktif) : semuaKategori;
-    res.render('katalog', { title: 'Katalog Layanan', semuaKategori, sections, aktif, urut });
+    const kuota = await statusKuota();
+    res.render('katalog', { title: 'Katalog Layanan', semuaKategori, sections, aktif, urut, kuota });
   } catch (e) { next(e); }
 });
 

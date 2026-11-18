@@ -2043,3 +2043,20 @@ body{background:#f6efeb;color:#2b2320;font-family:'DM Sans',sans-serif}
   }
   .tabel td:has(> img.thumb)::before { content: none; }
 }
+
+.ap-wa{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 14px;border-radius:999px;background:#e1f2e5;color:#2f7a45;font-size:.82rem;font-weight:600;text-decoration:none;transition:background .2s}
+.ap-wa:hover{background:#cfe8d5}
+.ap-wa-kosong{display:inline-block;margin-top:8px;color:#8a7774}
+
+.ap-wa{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 14px;border-radius:999px;background:#e1f2e5;color:#2f7a45;font-size:.82rem;font-weight:600;text-decoration:none;transition:background .2s}
+.ap-wa:hover{background:#cfe8d5}
+.ap-wa-kosong{display:inline-block;margin-top:8px;color:#8a7774}
+.ap-bayar{margin:8px 0 0;display:flex;align-items:center;gap:10px}
+.ap-cek{background:none;border:0;color:#6b2737;font:inherit;font-size:.8rem;text-decoration:underline;cursor:pointer;padding:0}
+
+/* Kuota paket */
+.kp-kuota{margin:8px 0 0;font-size:.8rem;color:#8a7774;text-align:center}
+.kp-populer .kp-kuota{color:#fff}
+.kp-btn:disabled{background:#eadfd5;color:#8a7774;border-color:#eadfd5;cursor:not-allowed}
+.kp-populer .kp-btn:disabled{background:rgba(255,255,255,.25);color:#fff;border-color:transparent}
+.kp-penuh .kp-gambar img{filter:grayscale(.7);opacity:.75}

@@ -10,7 +10,7 @@ const DEFAULT = {
   banner_tombol2: 'Coba Kalkulator',
   footer_deskripsi: 'Jasa pengelolaan media sosial untuk UMKM fashion di Makassar. Konten, jadwal posting, sampai laporan performa bulanan.',
   kontak_instagram: 'fouracreativee',
-  kontak_tiktok: 'fouracreative',
+  kontak_tiktok: 'fouracreativee',
   kontak_wa: '0882-4580-4687',
   tentang_hero_teks: 'Foura Creative hadir untuk membantu brand fashion lokal tumbuh melalui strategi media sosial yang tepat, konten yang berkualitas, dan pendekatan yang kreatif serta berkelanjutan.',
   tentang_cerita_judul: 'Berawal dari kecintaan pada fashion dan dunia digital.',

@@ -2,11 +2,17 @@
   const rpFmt = n => 'Rp ' + Number(n).toLocaleString('id-ID');
   const satuanTxt = p.satuan === 'sekali bayar' ? '(sekali bayar)' : (p.satuan ? '/' + p.satuan : '');
   const namaKat = (typeof kat !== 'undefined' && kat) ? kat.name_kategori : (p.category ? p.category.name_kategori : '');
+
+  // Kuota paket bulan ini (hanya untuk Paket Bundling)
+  const jenisPaket = String(p.name || '').toLowerCase().replace(/^paket\s+/, '').trim();
+  const infoKuota = (typeof kuota !== 'undefined' && kuota && namaKat === 'Paket Bundling') ? kuota[jenisPaket] : null;
+  const sudahAda = (typeof idKeranjang !== 'undefined') && idKeranjang.includes(p.id);
+  const penuh = !!(infoKuota && infoKuota.penuh && !sudahAda);
 %>
-<article class="kp <%= p.populer ? 'kp-populer' : '' %>">
+<article class="kp <%= p.populer ? 'kp-populer' : '' %> <%= penuh ? 'kp-penuh' : '' %>">
   <div class="kp-gambar">
     <% if (p.populer) { %><span class="kp-label">Paling Dipilih</span><% } %>
-        <% const foto = p.image ? '/uploads/' + p.image : (p.gambar || ''); %>
+    <% const foto = p.image ? '/uploads/' + p.image : (p.gambar || ''); %>
     <% if (foto) { %>
       <img src="<%= foto %>" alt="<%= p.name %>" loading="lazy">
     <% } else { %>
@@ -29,22 +35,27 @@
 
     <p class="kp-harga"><%= rpFmt(p.price) %> <small><%= satuanTxt %></small></p>
 
-        <%
-      const sudahAda = (typeof idKeranjang !== 'undefined') && idKeranjang.includes(p.id);
-    %>
-    <div class="kp-aksi" data-id="<%= p.id %>">
-      <form method="POST" action="/keranjang/tambah" class="kp-f-tambah" <%= sudahAda ? 'hidden' : '' %>>
-        <input type="hidden" name="produkId" value="<%= p.id %>">
-        <button type="submit" class="kp-btn">+ Keranjang</button>
-      </form>
-      <form method="POST" action="/keranjang/batal" class="kp-f-batal" <%= sudahAda ? '' : 'hidden' %>>
-        <input type="hidden" name="produkId" value="<%= p.id %>">
-        <div class="kp-ok">
-          <span>✓ Ditambahkan</span>
-          <button type="submit" class="kp-batal">Batalkan</button>
-        </div>
-      </form>
-    </div>
+    <% if (infoKuota && !penuh) { %>
+      <p class="kp-kuota">Sisa slot bulan ini: <strong><%= infoKuota.sisa %> dari <%= infoKuota.kuota %></strong></p>
+    <% } %>
+
+    <% if (penuh) { %>
+      <button type="button" class="kp-btn" disabled>Penuh bulan ini</button>
+      <p class="kp-kuota">Slot terbuka lagi bulan depan.</p>
+    <% } else { %>
+      <div class="kp-aksi" data-id="<%= p.id %>">
+        <form method="POST" action="/keranjang/tambah" class="kp-f-tambah" <%= sudahAda ? 'hidden' : '' %>>
+          <input type="hidden" name="produkId" value="<%= p.id %>">
+          <button type="submit" class="kp-btn">+ Keranjang</button>
+        </form>
+        <form method="POST" action="/keranjang/batal" class="kp-f-batal" <%= sudahAda ? '' : 'hidden' %>>
+          <input type="hidden" name="produkId" value="<%= p.id %>">
+          <div class="kp-ok">
+            <span>✓ Ditambahkan</span>
+            <button type="submit" class="kp-batal">Batalkan</button>
+          </div>
+        </form>
+      </div>
+    <% } %>
   </div>
 </article>
-

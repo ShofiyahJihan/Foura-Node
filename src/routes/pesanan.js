@@ -212,6 +212,9 @@ router.get('/admin/pesanan', wajibAdmin, async (req, res, next) => {
     const per = await itemPerPesanan(semua.map(p => p.id));
     const daftar = semua.map(p => ({
       id: p.id, kode: p.kode, pelanggan: p.namaPelanggan, tanggal: fmt(p.createdAt),
+      wa: p.no_hp || '',
+      bayar: p.status_bayar || 'belum_bayar',
+      adaOrder: !!p.midtrans_order_id,
       total: p.total, status: p.status, tahap: p.tahap, catatan: p.catatan,
       items: per[p.id] || [],
     }));
@@ -238,4 +241,3 @@ router.post('/admin/pesanan/:id/tahap', wajibAdmin, async (req, res, next) => {
 });
 
 module.exports = router;
-

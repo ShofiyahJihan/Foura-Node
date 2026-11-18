@@ -304,4 +304,34 @@ router.post('/midtrans/notifikasi', async (req, res) => {
   } catch (e) { console.error('Webhook:', e.message); res.sendStatus(500); }
 });
 
+/* ---------- Admin: cek status pembayaran ke Midtrans ---------- */
+const bolehAdmin = (req, res) => ['admin', 'seller'].includes(res.locals.role);
+
+router.post('/admin/cek/:id', requireLogin, async (req, res) => {
+  try {
+    if (!bolehAdmin(req, res)) return res.status(403).send('Akses ditolak.');
+    await siapkan();
+    const pesanan = await CheckoutPesanan.findByPk(req.params.id, { attributes: { exclude: ['bukti_data'] } });
+    if (pesanan && pesanan.midtrans_order_id) {
+      const s = await snap.transaction.status(pesanan.midtrans_order_id);
+      await terapkan(pesanan, s);
+    }
+  } catch (e) { console.error('Cek admin:', e.message); }
+  res.redirect('/admin/pesanan');
+});
+
+router.post('/admin/cek-semua', requireLogin, async (req, res) => {
+  try {
+    if (!bolehAdmin(req, res)) return res.status(403).send('Akses ditolak.');
+    await siapkan();
+    const daftar = await CheckoutPesanan.findAll({ attributes: { exclude: ['bukti_data'] } });
+    for (const p of daftar) {
+      if (!p.midtrans_order_id || p.status_bayar === 'lunas') continue;
+      try { await terapkan(p, await snap.transaction.status(p.midtrans_order_id)); }
+      catch (e) { /* lewati pesanan yang gagal dicek */ }
+    }
+  } catch (e) { console.error('Cek semua:', e.message); }
+  res.redirect('/admin/pesanan');
+});
+
 module.exports = router;

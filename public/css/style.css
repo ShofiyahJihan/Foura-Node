@@ -2081,3 +2081,30 @@ body{background:#f6efeb;color:#2b2320;font-family:'DM Sans',sans-serif}
 .rw-bukti-item { background: #f7f7f9; border-radius: 8px; padding: 8px 10px; font-size: 14px; }
 .rw-bukti-item p { margin: 4px 0; }
 .rw-bukti-item img { display: block; max-width: 160px; border-radius: 6px; margin-top: 6px; }
+/* =====================================================
+   PERBAIKAN TAMPILAN HP (letakkan paling bawah agar tidak tertimpa)
+   ===================================================== */
+
+/* Gambar kartu artikel selalu memenuhi kotaknya */
+.fd-thumb,.dt-lain-thumb{position:relative;overflow:hidden}
+.fd-thumb img,.dt-lain-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+
+/* Halaman detail artikel: satu kolom di tablet & HP (sebelumnya tertimpa aturan dua kolom) */
+@media(max-width:1000px){
+  .dt-layout{grid-template-columns:minmax(0,1fr);gap:30px}
+  .dt-samping{position:static;top:auto}
+  .dt-lain-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+  .dt-lain-grid{grid-template-columns:minmax(0,1fr)}
+  .dt-bar>*{flex-wrap:wrap;gap:6px}
+  .dt-bar button,.dt-bar a{padding:6px 10px;font-size:.9rem}
+  .dt-teks p{text-align:left;hyphens:none;-webkit-hyphens:none}
+  .dt-judul{overflow-wrap:break-word}
+}
+
+/* Tombol Masuk di dalam menu hamburger (HP sempit) */
+.nav .links .link-masuk{display:none}
+@media (max-width:480px){
+  .nav.buka .links .link-masuk{display:block;font-weight:600;color:var(--maroon)}
+}

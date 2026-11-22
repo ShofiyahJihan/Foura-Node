@@ -1,6 +1,7 @@
 const { User } = require('../models');
 const { getRole, getProfile, LABEL } = require('../services/roles');
 const { ambil: ambilPengaturan } = require('../services/pengaturan');
+const { fotoUrl } = require('../services/gambar-db');
 
 const rupiah = (n) => 'Rp ' + new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(Number(n));
 
@@ -29,6 +30,7 @@ module.exports = async (req, res, next) => {
     delete req.session.flash;
     res.locals.path = req.path;
     res.locals.rupiah = rupiah;
+    res.locals.fotoUrl = fotoUrl;
     res.locals.LABEL = LABEL;
     next();
   } catch (e) { next(e); }

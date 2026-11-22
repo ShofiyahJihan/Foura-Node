@@ -22,7 +22,7 @@
     </label>
         <% if (produk && (produk.image || gambarBawaan)) { %>
       <p class="bantuan">Gambar saat ini<%= produk.image ? '' : ' (bawaan)' %>:<br>
-        <img src="<%= produk.image ? '/uploads/' + produk.image : gambarBawaan %>" alt="" style="width:120px;border-radius:8px">
+        <img src="<%= produk.image ? fotoUrl(produk.image) : gambarBawaan %>" alt="" style="width:120px;border-radius:8px">
       </p>
     <% } %>
     <label>Gambar tambahan <span class="bantuan">(boleh pilih beberapa, maks. 5)</span>
@@ -36,7 +36,7 @@
     <div class="media-list">
       <% media.forEach(m => { %>
         <figure>
-          <img src="/uploads/<%= m.file %>" alt="">
+          <img src="<%= fotoUrl(m.file) %>" alt="">
           <form method="post" action="/kelola/produk/<%= produk.id %>/media/<%= m.id %>/hapus" onsubmit="return confirm('Hapus gambar ini?')"><button class="btn bahaya sm" style="margin-top:.4rem">Hapus</button></form>
         </figure>
       <% }) %>

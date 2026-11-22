@@ -1,21 +1,21 @@
 const router = require('express').Router();
 const { User, CategoryProduct, Product, MediaFile } = require('../models');
 const { requireRole } = require('../middleware/auth');
-const { handleUpload, relPath, removeFile, uploadedFiles } = require('../services/files');
+const { handleUpload, relPath, removeFile } = require('../services/files');
 const { hapusProduk } = require('../services/produk');
 const { ROLES, getRole, setRole } = require('../services/roles');
 const { kategori: DATA } = require('../services/katalog-data');
+const { fotoUrl } = require('../services/gambar-db');
 
 const adminOnly = requireRole('admin');
 const gambarProduk = handleUpload([{ name: 'image', maxCount: 1 }, { name: 'gambar_tambahan', maxCount: 5 }]);
 const gambarKategori = handleUpload([{ name: 'image', maxCount: 1 }]);
-const bersihkan = (req) => uploadedFiles(req).forEach((f) => removeFile(relPath(f)));
 
 // Foto bawaan per produk (dari katalog-data.js), dipakai kalau admin belum upload
 const norm = s => String(s).toLowerCase().replace(/^paket\s+/, '').trim();
 const GAMBAR_BAWAAN = {};
 DATA.forEach(k => k.products.forEach(p => { GAMBAR_BAWAAN[norm(p.name)] = p.gambar || ''; }));
-const urlGambar = p => (p.image ? '/uploads/' + p.image : (GAMBAR_BAWAAN[norm(p.name)] || ''));
+const urlGambar = p => (p.image ? fotoUrl(p.image) : (GAMBAR_BAWAAN[norm(p.name)] || ''));
 
 /* ================= Dashboard ================= */
 router.get('/', adminOnly, async (req, res, next) => {
@@ -57,21 +57,21 @@ router.post('/produk', adminOnly, gambarProduk, async (req, res, next) => {
     const b = req.body;
     const kat = await CategoryProduct.findByPk(parseInt(b.category_id, 10) || 0);
     const error = req.uploadError || validasiProduk(b, kat);
-    if (error) { bersihkan(req); return formProduk(res, { form: b, error, status: 400 }); }
+    if (error) { return formProduk(res, { form: b, error, status: 400 }); }
 
     const utama = (req.files.image || [])[0];
     const produk = await Product.create({
       name: b.name.trim(), deskripsi: (b.deskripsi || '').trim() || null,
       price: Number(String(b.price).replace(',', '.')), category_id: kat.id,
-      image: utama ? relPath(utama) : null,
+      image: utama ? await relPath(utama) : null,
     });
     for (const f of req.files.gambar_tambahan || []) {
-      const m = await MediaFile.create({ file: relPath(f) });
+      const m = await MediaFile.create({ file: await relPath(f) });
       await produk.addGambar_tambahan(m);
     }
     req.flash('ok', 'Produk berhasil ditambahkan.');
     res.redirect('/kelola/produk');
-  } catch (e) { bersihkan(req); next(e); }
+  } catch (e) { next(e); }
 });
 
 router.get('/produk/:id/edit', adminOnly, async (req, res, next) => {
@@ -85,26 +85,26 @@ router.get('/produk/:id/edit', adminOnly, async (req, res, next) => {
 router.post('/produk/:id', adminOnly, gambarProduk, async (req, res, next) => {
   try {
     const produk = await Product.findByPk(req.params.id);
-    if (!produk) { bersihkan(req); return next(); }
+    if (!produk) return next();
     const b = req.body;
     const kat = await CategoryProduct.findByPk(parseInt(b.category_id, 10) || 0);
     const error = req.uploadError || validasiProduk(b, kat);
-    if (error) { bersihkan(req); return formProduk(res, { produk, form: b, error, status: 400 }); }
+    if (error) { return formProduk(res, { produk, form: b, error, status: 400 }); }
 
     const data = {
       name: b.name.trim(), deskripsi: (b.deskripsi || '').trim() || null,
       price: Number(String(b.price).replace(',', '.')), category_id: kat.id,
     };
     const utama = (req.files.image || [])[0];
-    if (utama) { removeFile(produk.image); data.image = relPath(utama); }
+    if (utama) { await removeFile(produk.image); data.image = await relPath(utama); }
     await produk.update(data);
     for (const f of req.files.gambar_tambahan || []) {
-      const m = await MediaFile.create({ file: relPath(f) });
+      const m = await MediaFile.create({ file: await relPath(f) });
       await produk.addGambar_tambahan(m);
     }
     req.flash('ok', 'Produk berhasil diperbarui.');
     res.redirect('/kelola/produk');
-  } catch (e) { bersihkan(req); next(e); }
+  } catch (e) { next(e); }
 });
 
 router.post('/produk/:id/media/:mediaId/hapus', adminOnly, async (req, res, next) => {
@@ -112,7 +112,7 @@ router.post('/produk/:id/media/:mediaId/hapus', adminOnly, async (req, res, next
     const produk = await Product.findByPk(req.params.id);
     if (!produk) return next();
     const [m] = await produk.getGambar_tambahan({ where: { id: req.params.mediaId } });
-    if (m) { removeFile(m.file); await produk.removeGambar_tambahan(m); await m.destroy(); }
+    if (m) { await removeFile(m.file); await produk.removeGambar_tambahan(m); await m.destroy(); }
     req.flash('ok', 'Gambar dihapus.');
     res.redirect(`/kelola/produk/${produk.id}/edit`);
   } catch (e) { next(e); }
@@ -144,12 +144,12 @@ router.post('/kategori', adminOnly, gambarKategori, async (req, res, next) => {
     const b = req.body;
     const nama = (b.name_kategori || '').trim();
     const error = req.uploadError || (!nama ? 'Nama kategori wajib diisi.' : nama.length > 100 ? 'Nama maksimal 100 karakter.' : null);
-    if (error) { bersihkan(req); return res.status(400).render('kelola/kategori-form', { title: 'Tambah Kategori', kat: null, form: b, error }); }
+    if (error) { return res.status(400).render('kelola/kategori-form', { title: 'Tambah Kategori', kat: null, form: b, error }); }
     const f = (req.files.image || [])[0];
-    await CategoryProduct.create({ name_kategori: nama, deskripsi_kategori: (b.deskripsi_kategori || '').trim() || null, image: f ? relPath(f) : null });
+    await CategoryProduct.create({ name_kategori: nama, deskripsi_kategori: (b.deskripsi_kategori || '').trim() || null, image: f ? await relPath(f) : null });
     req.flash('ok', 'Kategori ditambahkan.');
     res.redirect('/kelola/kategori');
-  } catch (e) { bersihkan(req); next(e); }
+  } catch (e) { next(e); }
 });
 
 router.get('/kategori/:id/edit', adminOnly, async (req, res, next) => {
@@ -163,18 +163,18 @@ router.get('/kategori/:id/edit', adminOnly, async (req, res, next) => {
 router.post('/kategori/:id', adminOnly, gambarKategori, async (req, res, next) => {
   try {
     const kat = await CategoryProduct.findByPk(req.params.id);
-    if (!kat) { bersihkan(req); return next(); }
+    if (!kat) return next();
     const b = req.body;
     const nama = (b.name_kategori || '').trim();
     const error = req.uploadError || (!nama ? 'Nama kategori wajib diisi.' : nama.length > 100 ? 'Nama maksimal 100 karakter.' : null);
-    if (error) { bersihkan(req); return res.status(400).render('kelola/kategori-form', { title: 'Ubah Kategori', kat, form: b, error }); }
+    if (error) { return res.status(400).render('kelola/kategori-form', { title: 'Ubah Kategori', kat, form: b, error }); }
     const data = { name_kategori: nama, deskripsi_kategori: (b.deskripsi_kategori || '').trim() || null };
     const f = (req.files.image || [])[0];
-    if (f) { removeFile(kat.image); data.image = relPath(f); }
+    if (f) { await removeFile(kat.image); data.image = await relPath(f); }
     await kat.update(data);
     req.flash('ok', 'Kategori diperbarui.');
     res.redirect('/kelola/kategori');
-  } catch (e) { bersihkan(req); next(e); }
+  } catch (e) { next(e); }
 });
 
 // Sama seperti model dosen (on_delete=CASCADE): produk di dalam kategori ikut terhapus
@@ -183,7 +183,7 @@ router.post('/kategori/:id/hapus', adminOnly, async (req, res, next) => {
     const kat = await CategoryProduct.findByPk(req.params.id, { include: [{ model: Product, as: 'products' }] });
     if (!kat) return next();
     for (const p of kat.products) await hapusProduk(p);
-    removeFile(kat.image);
+    await removeFile(kat.image);
     await kat.destroy();
     req.flash('ok', 'Kategori dan seluruh produk di dalamnya dihapus.');
     res.redirect('/kelola/kategori');

@@ -12,7 +12,7 @@
 <article class="kp <%= p.populer ? 'kp-populer' : '' %> <%= penuh ? 'kp-penuh' : '' %>">
   <div class="kp-gambar">
     <% if (p.populer) { %><span class="kp-label">Paling Dipilih</span><% } %>
-    <% const foto = p.image ? '/uploads/' + p.image : (p.gambar || ''); %>
+    <% const foto = p.image ? fotoUrl(p.image) : (p.gambar || ''); %>
     <% if (foto) { %>
       <img src="<%= foto %>" alt="<%= p.name %>" loading="lazy">
     <% } else { %>

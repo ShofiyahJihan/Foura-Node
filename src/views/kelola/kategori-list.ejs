@@ -7,7 +7,7 @@
     <tbody>
     <% daftar.forEach(k => { %>
       <tr>
-        <td><% if (k.image) { %><img class="thumb" src="/uploads/<%= k.image %>" alt=""><% } %></td>
+        <td><% if (k.image) { %><img class="thumb" src="<%= fotoUrl(k.image) %>" alt=""><% } %></td>
         <td><b><%= k.name_kategori %></b></td>
         <td class="muted"><%= k.deskripsi_kategori || '-' %></td>
         <td><%= k.products.length %></td>

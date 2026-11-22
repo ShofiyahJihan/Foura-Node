@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const sequelize = require('../db');
 const { Artikel, ArtikelReaksi, ArtikelKomentar } = require('./artikel');
+require('./gambar'); // tabel gambar_db (foto unggahan disimpan di database)
 
 
 /* ---------- User (setara django.contrib.auth.models.User) ---------- */

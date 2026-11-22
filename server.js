@@ -6,6 +6,7 @@ const { sequelize } = require('./src/models');
 
 
 const app = express();
+app.set('trust proxy', 1); // di belakang proxy hosting (Railway)
 const PORT = process.env.PORT || 3000;
 
 
@@ -25,6 +26,7 @@ app.use(session({
 app.use(require('./src/middleware/locals'));
 
 
+app.use('/media', require('./src/routes/media'));
 app.use('/', require('./src/routes/public'));
 app.use('/', require('./src/routes/auth'));
 app.use('/', require('./src/routes/artikel'));

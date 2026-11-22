@@ -1,11 +1,10 @@
 // Fitur Artikel: baca, cari, filter, suka, simpan, komentar (pengunjung) + kelola (admin)
 const router = require('express').Router();
-const fs = require('fs');
-const path = require('path');
 const { Op, fn, col, where: sqlWhere } = require('sequelize');
 const { Artikel, ArtikelReaksi, ArtikelKomentar } = require('../models');
 const { requireRole } = require('../middleware/auth');
 const uploadArtikel = require('../middleware/upload');
+const { simpanGambar, hapusGambar } = require('../services/gambar-db');
 
 
 const adminOnly = requireRole('admin');
@@ -19,20 +18,11 @@ const gambarValid = (g) => !g || /^(https?:\/\/|\/)/i.test(g);
 const idUser = (res) => (res.locals.user && res.locals.user.id) || null;
 
 
-// Hapus file upload dari disk (hanya yang ada di /uploads/artikel/)
-const FOLDER_UPLOAD = path.join(__dirname, '..', '..', 'public', 'uploads', 'artikel');
-function hapusBerkas(url) {
-  if (!url || !String(url).startsWith('/uploads/artikel/')) return;
-  const p = path.join(__dirname, '..', '..', 'public', url);
-  if (!p.startsWith(FOLDER_UPLOAD + path.sep)) return;
-  fs.unlink(p, () => {});
-}
-
-
-// Kalau validasi gagal, buang file yang barusan terupload
-function buangUploadBaru(req) {
+// Simpan file baru (kalau ada) ke database dan isi alamatnya ke req.body. Dipanggil setelah validasi lolos.
+async function terapkanUpload(req) {
   const f = req.files || {};
-  Object.values(f).flat().forEach((x) => fs.unlink(x.path, () => {}));
+  if (f.gambarFile) req.body.gambar = await simpanGambar(f.gambarFile[0]);
+  if (f.penulisFotoFile) req.body.penulisFoto = await simpanGambar(f.penulisFotoFile[0]);
 }
 
 
@@ -284,11 +274,11 @@ router.post('/kelola/artikel', adminOnly, uploadArtikel, async (req, res, next) 
   try {
     const error = validasi(req);
     if (error) {
-      buangUploadBaru(req);
       return res.status(400).render('kelola/artikel-form', {
         title: 'Tulis Artikel', artikel: null, form: { ...req.body, terbit: req.body.terbit === 'on' }, error,
       });
     }
+    await terapkanUpload(req);
     const data = dariForm(req.body);
     await Artikel.create({
       ...data,
@@ -316,18 +306,18 @@ router.post('/kelola/artikel/:id', adminOnly, uploadArtikel, async (req, res, ne
     if (!a) return next();
     const error = validasi(req);
     if (error) {
-      buangUploadBaru(req);
       return res.status(400).render('kelola/artikel-form', {
         title: 'Ubah Artikel', artikel: a, form: { ...req.body, terbit: req.body.terbit === 'on' }, error,
       });
     }
     const lamaGambar = a.gambar;
     const lamaFoto = a.penulisFoto;
+    await terapkanUpload(req);
     const data = dariForm(req.body);
     await a.update(data);
-    // Hapus file lama dari disk kalau sudah diganti atau dihapus
-    if (lamaGambar && lamaGambar !== data.gambar) hapusBerkas(lamaGambar);
-    if (lamaFoto && lamaFoto !== data.penulisFoto) hapusBerkas(lamaFoto);
+    // Hapus gambar lama kalau sudah diganti atau dihapus
+    if (lamaGambar && lamaGambar !== data.gambar) await hapusGambar(lamaGambar);
+    if (lamaFoto && lamaFoto !== data.penulisFoto) await hapusGambar(lamaFoto);
     req.flash('ok', 'Artikel berhasil diperbarui.');
     res.redirect('/kelola/artikel');
   } catch (e) { next(e); }
@@ -340,7 +330,7 @@ router.post('/kelola/artikel/:id/hapus', adminOnly, async (req, res, next) => {
     await ArtikelReaksi.destroy({ where: { artikelId: req.params.id } });
     await ArtikelKomentar.destroy({ where: { artikelId: req.params.id } });
     await Artikel.destroy({ where: { id: req.params.id } });
-    if (a) { hapusBerkas(a.gambar); hapusBerkas(a.penulisFoto); }
+    if (a) { await hapusGambar(a.gambar); await hapusGambar(a.penulisFoto); }
     req.flash('ok', 'Artikel dihapus.');
     res.redirect('/kelola/artikel');
   } catch (e) { next(e); }

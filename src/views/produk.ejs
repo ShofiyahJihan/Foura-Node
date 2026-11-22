@@ -1,7 +1,7 @@
 <%- include('partials/header') %>
 
 <%
-const gambar = produk.image ? '/uploads/' + produk.image : (meta.gambar || '');
+const gambar = produk.image ? fotoUrl(produk.image) : (meta.gambar || '');
 const wa = String(S.kontak_wa || '').replace(/\D/g, '').replace(/^0/, '62');
 const pesanWa = encodeURIComponent('Halo Foura Creative, saya tertarik dengan ' + produk.name + '. Boleh minta info lebih lanjut?');
 %>
@@ -27,7 +27,7 @@ const pesanWa = encodeURIComponent('Halo Foura Creative, saya tertarik dengan ' 
       <% if (produk.gambar_tambahan && produk.gambar_tambahan.length) { %>
         <div class="pd-galeri">
           <% produk.gambar_tambahan.forEach(m => { %>
-            <a href="/uploads/<%= m.file %>" target="_blank" rel="noopener"><img src="/uploads/<%= m.file %>" alt="Gambar tambahan <%= produk.name %>"></a>
+            <a href="<%= fotoUrl(m.file) %>" target="_blank" rel="noopener"><img src="<%= fotoUrl(m.file) %>" alt="Gambar tambahan <%= produk.name %>"></a>
           <% }) %>
         </div>
       <% } %>

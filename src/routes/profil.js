@@ -1,22 +1,16 @@
 const router = require('express').Router();
-const path = require('path');
-const fs = require('fs');
 const multer = require('multer');
 const { requireLogin } = require('../middleware/auth');
 const { getProfile } = require('../services/roles');
+const { simpanGambar, hapusGambar } = require('../services/gambar-db');
 
 router.use(requireLogin);
 
-// ---- Upload foto profil: disimpan di public/uploads/profil ----
-const folderUpload = path.join(__dirname, '..', '..', 'public', 'uploads', 'profil');
-fs.mkdirSync(folderUpload, { recursive: true });
+// ---- Upload foto profil: disimpan di database (tabel gambar_db) ----
 const EKSTENSI = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp' };
 
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: folderUpload,
-    filename: (req, file, cb) => cb(null, `u${req.user.id}-${Date.now()}${EKSTENSI[file.mimetype]}`),
-  }),
+  storage: multer.memoryStorage(),
   limits: { fileSize: 2 * 1024 * 1024 }, // maksimal 2 MB
   fileFilter: (req, file, cb) => {
     const ok = Boolean(EKSTENSI[file.mimetype]);
@@ -34,8 +28,6 @@ const terimaFoto = (req, res, next) => upload.single('foto')(req, res, async (er
   } catch (e) { next(e); }
 });
 
-const hapusFile = (rel) => { if (rel) fs.unlink(path.join(__dirname, '..', '..', 'public', rel), () => {}); };
-
 // ---- Halaman profil ----
 router.get('/', async (req, res, next) => {
   try {
@@ -48,7 +40,6 @@ router.post('/', terimaFoto, async (req, res, next) => {
   try {
     const profil = await getProfile(req.user, req.role);
     const gagal = (pesan) => {
-      if (req.file) fs.unlink(req.file.path, () => {});
       return res.status(400).render('profil', { title: 'Profil Saya', profil, error: pesan });
     };
     const no_hp = (req.body.no_hp || '').trim();
@@ -62,10 +53,13 @@ router.post('/', terimaFoto, async (req, res, next) => {
     const dataProfil = { alamat: (req.body.alamat || '').trim() || null, no_hp: no_hp || null };
     if (req.role === 'customer') dataProfil.nama_umkm = (req.body.nama_umkm || '').trim() || null;
     if (req.file) {
-      hapusFile(profil.foto); // hapus foto lama
-      dataProfil.foto = '/uploads/profil/' + req.file.filename;
+      const fotoLama = profil.foto;
+      dataProfil.foto = await simpanGambar(req.file);
+      await profil.update(dataProfil);
+      await hapusGambar(fotoLama); // hapus foto lama
+    } else {
+      await profil.update(dataProfil);
     }
-    await profil.update(dataProfil);
 
     req.flash('ok', 'Profil berhasil disimpan.');
     res.redirect('/profil');

@@ -21,8 +21,7 @@
     "midtrans-client": "^1.4.3",
     "multer": "^2.5.0",
     "mysql2": "^3.24.6",
-    "sequelize": "^6.37.3",
-    "sqlite3": "^5.1.7"
+    "sequelize": "^6.37.3"
   },
   "allowScripts": {
     "sqlite3@5.1.7": true

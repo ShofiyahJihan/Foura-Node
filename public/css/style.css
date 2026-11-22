@@ -2108,3 +2108,29 @@ body{background:#f6efeb;color:#2b2320;font-family:'DM Sans',sans-serif}
 @media (max-width:480px){
   .nav.buka .links .link-masuk{display:block;font-weight:600;color:var(--maroon)}
 }
+
+/* Ikon menu dashboard: jangan dirender sebagai emoji berwarna di HP */
+.dash-nav span,.sidebar span,aside span{font-variant-emoji:text}
+
+/* ===== Tentang Kami di HP: lebih lega, tidak dipaksa satu kolom sempit ===== */
+@media(max-width:700px){
+  .tt-blok{padding:2rem 20px}
+  .tt-blok h2{font-size:1.55rem}
+  .tt-cerita,.tt-nilai,.tt-tim{gap:1.4rem}
+  .tt-foto-kartu{aspect-ratio:16/10}
+
+  /* 4 keunggulan: 2 x 2 */
+  .tt-unggul{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tt-unggul-item{padding:1.1rem 1rem;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .tt-unggul-item:nth-child(2n){border-right:0}
+  .tt-unggul-item:nth-last-child(-n+2){border-bottom:0}
+  .tt-unggul-item h3{font-size:.98rem}
+  .tt-unggul-item p{font-size:.8rem;line-height:1.5}
+
+  /* nilai: 2 kolom */
+  .tt-nilai-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+  .tt-nilai-grid p{font-size:.8rem}
+
+  .tt-tim-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
+  .tt-cta{margin:1rem 20px 0;padding:1.5rem}
+}

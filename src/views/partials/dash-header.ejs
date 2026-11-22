@@ -34,14 +34,14 @@
         <a href="/kelola/produk" class="<%= on('/kelola/produk') %>"><span>▣</span> Kelola Katalog</a>
         <a href="/kelola/kategori" class="<%= on('/kelola/kategori') %>"><span>☰</span> Kelola Kategori</a>
         <% if (role === 'admin') { %>
-          <a href="/kelola/pengguna" class="<%= on('/kelola/pengguna') %>"><span>☺</span> Kelola Pengguna</a>
+          <a href="/kelola/pengguna" class="<%= on('/kelola/pengguna') %>"><span>☺︎</span> Kelola Pengguna</a>
           <a href="/kelola/artikel" class="<%= on('/kelola/artikel') %>"><span>✎</span> Kelola Artikel</a>
           <a href="/kelola/tentang" class="<%= on('/kelola/tentang') %>"><span>ⓘ</span> Kelola Tentang Kami</a>
           <a href="/kelola/kebijakan" class="<%= on('/kelola/kebijakan') %>"><span>§</span> Kelola Kebijakan</a>
         <% } %>
       <% } else { %>
         <a href="/riwayat" class="<%= on('/riwayat') %>"><span>☰</span> Riwayat Pesanan</a>
-        <a href="/profil" class="<%= on('/profil') %>"><span>☺</span> Profil Pengguna</a>
+        <a href="/profil" class="<%= on('/profil') %>"><span>☺︎</span> Profil Pengguna</a>
       <% } %>
       <button type="button" id="btnKeluar"><span>⇥</span> Keluar</button>
     </nav>

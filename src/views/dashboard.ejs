@@ -48,14 +48,14 @@
         <a href="/kelola/produk"><span>▣</span> Kelola Katalog</a>
         <a href="/kelola/kategori"><span>☰</span> Kelola Kategori</a>
         <% if (role === 'admin') { %>
-          <a href="/kelola/pengguna"><span>☺</span> Kelola Pengguna</a>
+          <a href="/kelola/pengguna"><span>☺︎</span> Kelola Pengguna</a>
           <a href="/kelola/artikel"><span>✎</span> Kelola Artikel</a>
           <a href="/kelola/tentang"><span>ⓘ</span> Kelola Tentang Kami</a>
           <a href="/kelola/kebijakan"><span>§</span> Kelola Kebijakan</a>
         <% } %>
       <% } else { %>
         <a href="/riwayat"><span>☰</span> Riwayat Pesanan</a>
-        <a href="/profil"><span>☺</span> Profil Pengguna</a>
+        <a href="/profil"><span>☺︎</span> Profil Pengguna</a>
       <% } %>
       <button type="button" id="btnKeluar"><span>⇥</span> Keluar</button>
     </nav>
@@ -105,7 +105,7 @@
           </a>
           <% if (role === 'admin') { %>
           <a class="d-stat" href="/kelola/pengguna">
-            <span class="d-ico">☺</span>
+            <span class="d-ico">☺︎</span>
             <div><small>Pengguna</small><strong><%= totalPengguna === null ? '-' : totalPengguna + ' akun' %></strong><em>terdaftar di situs</em></div>
             <span class="d-arrow">›</span>
           </a>

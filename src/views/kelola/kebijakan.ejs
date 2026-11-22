@@ -5,9 +5,9 @@
   <% if (err) { %><p class="err"><%= err %></p><% } %>
 
   <% Object.keys(HALAMAN).forEach(h => { %>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin:28px 0 12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px 14px;margin:28px 0 12px">
       <h2 style="margin:0"><%= HALAMAN[h] %></h2>
-      <div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
         <a class="btn sm ghost" href="/<%= h %>" target="_blank" rel="noopener">Lihat</a>
         <a class="btn sm" href="/kelola/kebijakan/bagian/baru?halaman=<%= h %>">+ Tambah Bagian</a>
       </div>

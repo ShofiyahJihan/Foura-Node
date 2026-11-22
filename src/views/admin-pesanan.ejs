@@ -4,7 +4,10 @@
 <section class="ap-wrap">
   <p class="d-eyebrow">Kelola</p>
   <h1 class="ap-judul">Kelola Pesanan</h1>
-  <p class="d-muted">Ubah tahap pekerjaan. Perubahan langsung terlihat di dashboard pelanggan.</p>
+  <p class="d-muted">Ubah tahap pekerjaan dan tambahkan bukti. Perubahan langsung terlihat di dashboard pelanggan.</p>
+
+  <% if (ok) { %><p class="bantuan" style="color:#2f7a45">Tersimpan.</p><% } %>
+  <% if (err) { %><p class="err"><%= err %></p><% } %>
 
   <form method="POST" action="/pembayaran/admin/cek-semua" style="margin:12px 0">
     <button type="submit" class="d-btn">Cek status semua pembayaran</button>
@@ -46,8 +49,28 @@
         <ul class="ap-list">
           <% p.items.forEach(i => { %><li><%= i.nama %> × <%= i.jumlah %> — <%= rp(i.harga * i.jumlah) %></li><% }) %>
         </ul>
-        <% if (p.catatan) { %><p class="ap-catatan">Catatan: <%= p.catatan %></p><% } %>
-        <form method="POST" action="/admin/pesanan/<%= p.id %>/tahap" class="ap-form">
+        <% if (p.catatan) { %><p class="ap-catatan">Catatan pembeli: <%= p.catatan %></p><% } %>
+
+        <% if (p.bukti.length) { %>
+          <div class="ap-bukti-list">
+            <small>Bukti yang sudah dikirim ke pembeli</small>
+            <% p.bukti.forEach(b => { %>
+              <div class="ap-bukti-item">
+                <div>
+                  <b><%= TAHAP[b.tahap - 1] %></b> <small><%= b.tanggal %></small>
+                  <% if (b.catatan) { %><p><%= b.catatan %></p><% } %>
+                  <% if (b.link) { %><a href="<%= b.link %>" target="_blank" rel="noopener noreferrer">Buka link</a><% } %>
+                  <% if (b.adaGambar) { %> <a href="/bukti-tahap/<%= b.id %>/gambar" target="_blank" rel="noopener">Lihat gambar</a><% } %>
+                </div>
+                <form method="POST" action="/admin/bukti/<%= b.id %>/hapus" onsubmit="return confirm('Hapus bukti ini?')">
+                  <button type="submit" class="ap-cek">Hapus</button>
+                </form>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+
+        <form method="POST" action="/admin/pesanan/<%= p.id %>/tahap" enctype="multipart/form-data" class="ap-form ap-form-bukti">
           <label>Tahap pekerjaan
             <select name="tahap">
               <option value="0" <%= p.tahap === 0 ? 'selected' : '' %>>Menunggu diproses</option>
@@ -55,6 +78,15 @@
                 <option value="<%= i + 1 %>" <%= p.tahap === i + 1 ? 'selected' : '' %>><%= t %> selesai</option>
               <% }) %>
             </select>
+          </label>
+          <label class="ap-lebar">Catatan untuk pembeli (opsional)
+            <textarea name="catatan" rows="2" maxlength="1000" placeholder="Contoh: Warna logo diganti sesuai permintaan"></textarea>
+          </label>
+          <label>Link (opsional)
+            <input type="url" name="link" maxlength="500" placeholder="https://...">
+          </label>
+          <label>Gambar (opsional, maks. 2 MB)
+            <input type="file" name="gambar" accept="image/jpeg,image/png,image/webp">
           </label>
           <button type="submit" class="d-btn">Simpan</button>
         </form>

@@ -2060,3 +2060,24 @@ body{background:#f6efeb;color:#2b2320;font-family:'DM Sans',sans-serif}
 .kp-btn:disabled{background:#eadfd5;color:#8a7774;border-color:#eadfd5;cursor:not-allowed}
 .kp-populer .kp-btn:disabled{background:rgba(255,255,255,.25);color:#fff;border-color:transparent}
 .kp-penuh .kp-gambar img{filter:grayscale(.7);opacity:.75}
+
+/* Form bukti: baris 1 = tahap, link, gambar. Baris 2 = catatan. Tombol di kanan bawah. */
+.ap-form-bukti{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px 16px;
+  align-items:start;
+}
+.ap-form-bukti .ap-lebar{grid-column:1/-1;grid-row:2}
+.ap-form-bukti textarea{min-height:70px}
+.ap-form-bukti .d-btn{grid-column:1/-1;justify-self:start}
+
+@media(max-width:800px){
+  .ap-form-bukti{grid-template-columns:1fr}
+  .ap-form-bukti .ap-lebar{grid-row:auto}
+}
+
+.rw-bukti { margin-top: 10px; display: grid; gap: 8px; }
+.rw-bukti-item { background: #f7f7f9; border-radius: 8px; padding: 8px 10px; font-size: 14px; }
+.rw-bukti-item p { margin: 4px 0; }
+.rw-bukti-item img { display: block; max-width: 160px; border-radius: 6px; margin-top: 6px; }

@@ -39,12 +39,23 @@ const PesananItem = sequelize.define('PesananItem', {
   fitur:     { type: DataTypes.TEXT, defaultValue: '' },
 }, { tableName: 'pesanan_item' });
 
+// Bukti pekerjaan per tahap (catatan, link, gambar) yang diisi admin
+const BuktiTahap = sequelize.define('BuktiTahap', {
+  pesananId:  { type: DataTypes.INTEGER, allowNull: false },
+  tahap:      { type: DataTypes.INTEGER, allowNull: false },
+  catatan:    { type: DataTypes.TEXT, allowNull: true },
+  link:       { type: DataTypes.STRING(500), allowNull: true },
+  gambarMime: { type: DataTypes.STRING(30), allowNull: true },
+  gambarData: { type: DataTypes.BLOB('long'), allowNull: true },
+}, { tableName: 'pesanan_bukti' });
+
 // Membuat tabel kalau belum ada (sekali saja)
 let tabel = null;
 const pastikanTabel = () => tabel || (tabel = (async () => {
   await Keranjang.sync();
   await Pesanan.sync();
   await PesananItem.sync();
+  await BuktiTahap.sync();
 })());
 
 const fmt = d => new Date(d).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
@@ -61,6 +72,24 @@ async function itemPerPesanan(ids) {
   if (!ids.length) return per;
   const items = await PesananItem.findAll({ where: { pesananId: { [Op.in]: ids } }, order: [['id', 'ASC']] });
   items.forEach(i => { (per[i.pesananId] = per[i.pesananId] || []).push(plain(i)); });
+  return per;
+}
+
+// Bukti per pesanan: { pesananId: [ { id, tahap, catatan, link, adaGambar, tanggal } ] }
+async function buktiPerPesanan(ids) {
+  const per = {};
+  if (!ids.length) return per;
+  const baris = await BuktiTahap.findAll({
+    where: { pesananId: { [Op.in]: ids } },
+    attributes: { exclude: ['gambarData'] },
+    order: [['tahap', 'ASC'], ['id', 'ASC']],
+  });
+  baris.forEach(b => {
+    (per[b.pesananId] = per[b.pesananId] || []).push({
+      id: b.id, tahap: b.tahap, catatan: b.catatan || '', link: b.link || '',
+      adaGambar: !!b.gambarMime, tanggal: fmt(b.createdAt),
+    });
+  });
   return per;
 }
 
@@ -154,6 +183,6 @@ async function dataAdmin() {
 }
 
 module.exports = {
-  Keranjang, Pesanan, PesananItem, TAHAP, LABEL_STATUS,
-  pastikanTabel, fmt, fmtPendek, judulPesanan, itemPerPesanan, dataUser, dataAdmin,
+  Keranjang, Pesanan, PesananItem, BuktiTahap, TAHAP, LABEL_STATUS,
+  pastikanTabel, fmt, fmtPendek, judulPesanan, itemPerPesanan, buktiPerPesanan, dataUser, dataAdmin,
 };

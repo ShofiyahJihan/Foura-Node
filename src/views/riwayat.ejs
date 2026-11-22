@@ -27,6 +27,21 @@
             <% d.items.forEach(i => { %><li><%= i.nama %> × <%= i.jumlah %></li><% }) %>
           </ul>
           <small>Progress: <%= d.tahap %> dari <%= TAHAP.length %> tahap<%= d.tahap > 0 && d.tahap < TAHAP.length ? ' (' + TAHAP[d.tahap - 1] + ' selesai)' : '' %></small>
+
+          <% if (d.bukti && d.bukti.length) { %>
+            <div class="rw-bukti">
+              <% d.bukti.forEach(b => { %>
+                <div class="rw-bukti-item">
+                  <b><%= TAHAP[b.tahap - 1] %></b> <small><%= b.tanggal %></small>
+                  <% if (b.catatan) { %><p><%= b.catatan %></p><% } %>
+                  <% if (b.link) { %><a href="<%= b.link %>" target="_blank" rel="noopener noreferrer">Buka link</a><% } %>
+                  <% if (b.adaGambar) { %>
+                    <a href="/bukti-tahap/<%= b.id %>/gambar" target="_blank" rel="noopener"><img src="/bukti-tahap/<%= b.id %>/gambar" alt="Bukti <%= TAHAP[b.tahap - 1] %>"></a>
+                  <% } %>
+                </div>
+              <% }) %>
+            </div>
+          <% } %>
         </div>
         <b class="rw-total"><%= rp(d.total) %></b>
       </article>

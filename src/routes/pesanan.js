@@ -1,17 +1,38 @@
 const router = require('express').Router();
+const multer = require('multer');
 const { Product, CategoryProduct } = require('../models');
 const { ProdukInfo } = require('../services/produk-info');
 const {
-  Keranjang, Pesanan, TAHAP, LABEL_STATUS, PesananItem,
-  pastikanTabel, fmt, judulPesanan, itemPerPesanan,
+  Keranjang, Pesanan, TAHAP, LABEL_STATUS, PesananItem, BuktiTahap,
+  pastikanTabel, fmt, judulPesanan, itemPerPesanan, buktiPerPesanan,
   dataAdmin, dataUser,
 } = require('../services/pesanan');
+const { cekKuota } = require('../services/kuota');
 const wajibLogin = (req, res, next) => (res.locals.user ? next() : res.redirect('/masuk'));
 const wajibAdmin = (req, res, next) => {
   if (!res.locals.user) return res.redirect('/masuk');
   if (!['admin', 'seller'].includes(res.locals.role)) return res.status(403).send('Akses ditolak.');
   next();
 };
+
+// Upload gambar bukti tahap (disimpan di database)
+const MAKS_MB = 2;
+const MIME_OK = ['image/jpeg', 'image/png', 'image/webp'];
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAKS_MB * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (!MIME_OK.includes(file.mimetype)) {
+      req.errUpload = 'Gambar harus berupa JPG, PNG, atau WEBP.';
+      return cb(null, false);
+    }
+    cb(null, true);
+  },
+});
+const unggahBukti = (req, res, next) => upload.single('gambar')(req, res, (err) => {
+  if (err) req.errUpload = err.code === 'LIMIT_FILE_SIZE' ? `Ukuran gambar maksimal ${MAKS_MB} MB.` : 'Upload gagal. Coba lagi.';
+  next();
+});
 
 // Jumlah isi keranjang untuk header (dipasang di public.js)
 router.localsKeranjang = async (req, res, next) => {
@@ -57,8 +78,18 @@ router.post('/keranjang/tambah', async (req, res, next) => {
   try {
     if (!res.locals.user) return mintaJson(req) ? res.status(401).json({ login: true }) : res.redirect('/masuk');
     await pastikanTabel();
-    const produk = await Product.findByPk(req.body.produkId);
+    const produk = await Product.findByPk(req.body.produkId, { include: [{ model: CategoryProduct, as: 'category' }] });
     if (!produk) return mintaJson(req) ? res.status(404).json({ ok: false }) : res.redirect('/katalog');
+
+    const penuh = await cekKuota([{
+      nama: produk.name, kategori: produk.category ? produk.category.name_kategori : '', jumlah: 1,
+    }]);
+    if (penuh) {
+      if (mintaJson(req)) return res.status(409).json({ ok: false, penuh: true, pesan: penuh });
+      req.flash('error', penuh);
+      return res.redirect(req.get('referer') || '/katalog');
+    }
+
     const uid = res.locals.user.id;
     const ada = await Keranjang.findOne({ where: { userId: uid, productId: produk.id } });
     if (!ada) await Keranjang.create({ userId: uid, productId: produk.id, jumlah: 1 });
@@ -143,7 +174,9 @@ router.get('/riwayat', wajibLogin, async (req, res, next) => {
     await pastikanTabel();
     const jenis = ['paket', 'satuan'].includes(req.query.jenis) ? req.query.jenis : 'semua';
     const semua = await Pesanan.findAll({ where: { userId: res.locals.user.id }, order: [['createdAt', 'DESC']] });
-    const per = await itemPerPesanan(semua.map(p => p.id));
+    const ids = semua.map(p => p.id);
+    const per = await itemPerPesanan(ids);
+    const buktiPer = await buktiPerPesanan(ids);
 
     let daftar = semua.map(p => {
       const it = per[p.id] || [];
@@ -151,12 +184,27 @@ router.get('/riwayat', wajibLogin, async (req, res, next) => {
         kode: p.kode, tanggal: fmt(p.createdAt), total: p.total, status: p.status, tahap: p.tahap,
         judul: judulPesanan(it), items: it, isPaket: it.some(i => i.kategori === 'Paket Bundling'),
         gambar: (it[0] && it[0].gambar) || '',
+        bukti: buktiPer[p.id] || [],
       };
     });
     if (jenis === 'paket') daftar = daftar.filter(d => d.isPaket);
     if (jenis === 'satuan') daftar = daftar.filter(d => !d.isPaket);
 
     res.render('riwayat', { title: 'Riwayat Pesanan', daftar, jenis, TAHAP, LABEL_STATUS });
+  } catch (e) { next(e); }
+});
+
+// ---------- Gambar bukti tahap (pemilik pesanan atau admin/seller) ----------
+router.get('/bukti-tahap/:id/gambar', wajibLogin, async (req, res, next) => {
+  try {
+    await pastikanTabel();
+    const b = await BuktiTahap.findByPk(req.params.id);
+    if (!b || !b.gambarData) return next();
+    const p = await Pesanan.findByPk(b.pesananId, { attributes: ['id', 'userId'] });
+    const admin = ['admin', 'seller'].includes(res.locals.role);
+    if (!p || (!admin && p.userId !== res.locals.user.id)) return res.status(403).send('Akses ditolak.');
+    res.set('Cache-Control', 'private, max-age=3600');
+    res.type(b.gambarMime || 'image/jpeg').send(b.gambarData);
   } catch (e) { next(e); }
 });
 
@@ -209,7 +257,9 @@ router.get('/admin/pesanan', wajibAdmin, async (req, res, next) => {
   try {
     await pastikanTabel();
     const semua = await Pesanan.findAll({ order: [['createdAt', 'DESC']] });
-    const per = await itemPerPesanan(semua.map(p => p.id));
+    const ids = semua.map(p => p.id);
+    const per = await itemPerPesanan(ids);
+    const buktiPer = await buktiPerPesanan(ids);
     const daftar = semua.map(p => ({
       id: p.id, kode: p.kode, pelanggan: p.namaPelanggan, tanggal: fmt(p.createdAt),
       wa: p.no_hp || '',
@@ -217,17 +267,33 @@ router.get('/admin/pesanan', wajibAdmin, async (req, res, next) => {
       adaOrder: !!p.midtrans_order_id,
       total: p.total, status: p.status, tahap: p.tahap, catatan: p.catatan,
       items: per[p.id] || [],
+      bukti: buktiPer[p.id] || [],
     }));
-    res.render('admin-pesanan', { title: 'Kelola Pesanan', daftar, TAHAP, LABEL_STATUS });
+    res.render('admin-pesanan', {
+      title: 'Kelola Pesanan', daftar, TAHAP, LABEL_STATUS,
+      ok: req.query.ok === '1', err: String(req.query.err || ''),
+    });
   } catch (e) { next(e); }
 });
 
-router.post('/admin/pesanan/:id/tahap', wajibAdmin, async (req, res, next) => {
+router.post('/admin/pesanan/:id/tahap', wajibAdmin, unggahBukti, async (req, res, next) => {
   try {
     await pastikanTabel();
+    const balik = '/admin/pesanan';
+    const gagal = (pesan) => res.redirect(balik + '?err=' + encodeURIComponent(pesan));
+
     const p = await Pesanan.findByPk(req.params.id);
     if (!p) return next();
+    if (req.errUpload) return gagal(req.errUpload);
+
     const n = Math.min(Math.max(parseInt(req.body.tahap, 10) || 0, 0), TAHAP.length);
+    const catatan = String(req.body.catatan || '').trim().slice(0, 1000);
+    const link = String(req.body.link || '').trim().slice(0, 500);
+    const adaBukti = !!(catatan || link || req.file);
+
+    if (link && !/^https?:\/\//i.test(link)) return gagal('Link harus diawali http:// atau https://.');
+    if (adaBukti && n === 0) return gagal('Pilih minimal tahap pertama untuk menambahkan bukti.');
+
     const tgl = JSON.parse(p.tahapTanggal || '{}');
     const sekarang = new Date().toISOString();
     TAHAP.forEach((_, i) => { if (i < n) { if (!tgl[i]) tgl[i] = sekarang; } else delete tgl[i]; });
@@ -236,7 +302,25 @@ router.post('/admin/pesanan/:id/tahap', wajibAdmin, async (req, res, next) => {
       tahapTanggal: JSON.stringify(tgl),
       status: n === 0 ? 'menunggu' : (n >= TAHAP.length ? 'selesai' : 'dikerjakan'),
     });
-    res.redirect('/admin/pesanan');
+
+    if (adaBukti) {
+      await BuktiTahap.create({
+        pesananId: p.id, tahap: n,
+        catatan: catatan || null, link: link || null,
+        gambarMime: req.file ? req.file.mimetype : null,
+        gambarData: req.file ? req.file.buffer : null,
+      });
+    }
+    res.redirect(balik + '?ok=1');
+  } catch (e) { next(e); }
+});
+
+// Hapus satu bukti (kalau salah isi)
+router.post('/admin/bukti/:id/hapus', wajibAdmin, async (req, res, next) => {
+  try {
+    await pastikanTabel();
+    await BuktiTahap.destroy({ where: { id: req.params.id } });
+    res.redirect('/admin/pesanan?ok=1');
   } catch (e) { next(e); }
 });
 

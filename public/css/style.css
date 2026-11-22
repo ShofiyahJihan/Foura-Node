@@ -2134,3 +2134,10 @@ body{background:#f6efeb;color:#2b2320;font-family:'DM Sans',sans-serif}
   .tt-tim-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
   .tt-cta{margin:1rem 20px 0;padding:1.5rem}
 }
+
+/* ===== Detail layanan di HP: tombol selebar layar ===== */
+@media(max-width:600px){
+  .pd-aksi{display:flex;flex-direction:column;gap:10px}
+  .pd-aksi .pd-btn{display:block;width:100%;text-align:center;box-sizing:border-box;padding-top:14px;padding-bottom:14px}
+  .pd-catatan{border:1px solid #ecd9d6;border-radius:14px}
+}

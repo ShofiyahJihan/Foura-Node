@@ -1,0 +1,58 @@
+<%- include('partials/header') %>
+<%
+  const ig = String(S.kontak_instagram).replace(/^@/, '');
+  const tt = String(S.kontak_tiktok).replace(/^@/, '');
+  const waNomor = String(S.kontak_wa).replace(/\D/g, '').replace(/^0/, '62');
+  const pesan = encodeURIComponent('Halo Foura Creative, saya ingin bertanya tentang layanan.');
+%>
+
+<section class="kt-hero">
+  <div class="kt-hero-in">
+    <p class="eyebrow">Hubungi Kami</p>
+    <h1>Ada pertanyaan? <em>Ayo ngobrol</em> bersama Foura Creative.</h1>
+    <p class="kt-sub">Tanyakan paket, jadwal, atau kebutuhan brand kamu lewat salah satu kanal di bawah. Kami senang membantu UMKM fashion di Makassar tampil lebih profesional.</p>
+  </div>
+</section>
+
+<section class="kt-wrap">
+  <div class="kt-grid">
+
+    <a class="kt-kartu" href="https://wa.me/<%= waNomor %>?text=<%= pesan %>" target="_blank" rel="noopener">
+      <span class="kt-ikon"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.6-.3z"/></svg></span>
+      <h2>WhatsApp</h2>
+      <p>Respons paling cepat untuk tanya paket dan pemesanan.</p>
+      <strong><%= S.kontak_wa %></strong>
+      <span class="kt-aksi">Kirim pesan →</span>
+    </a>
+
+    <a class="kt-kartu" href="https://instagram.com/<%= ig %>" target="_blank" rel="noopener">
+      <span class="kt-ikon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span>
+      <h2>Instagram</h2>
+      <p>Lihat hasil kerja kami dan kirim DM kapan saja.</p>
+      <strong>@<%= ig %></strong>
+      <span class="kt-aksi">Buka Instagram →</span>
+    </a>
+
+    <a class="kt-kartu" href="https://tiktok.com/@<%= tt %>" target="_blank" rel="noopener">
+      <span class="kt-ikon"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.7 5.7 0 1 0 4.9 5.7V9.1a7.3 7.3 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.2-1.6z"/></svg></span>
+      <h2>TikTok</h2>
+      <p>Ikuti konten video dan tips media sosial dari kami.</p>
+      <strong>@<%= tt %></strong>
+      <span class="kt-aksi">Buka TikTok →</span>
+    </a>
+
+  </div>
+
+  <div class="kt-cta">
+    <div>
+      <h2>Belum yakin paket mana yang cocok?</h2>
+      <p>Lihat katalog layanan atau coba kalkulator estimasi di beranda.</p>
+    </div>
+    <div class="kt-cta-aksi">
+      <a class="btn" href="/katalog">Lihat Katalog</a>
+      <a class="btn ghost" href="/#kalkulator">Coba Kalkulator</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -2155,3 +2155,33 @@ body{background:#f6efeb;color:#2b2320;font-family:'DM Sans',sans-serif}
 /* Link Kontak (menggulung halus ke footer) */
 html{scroll-behavior:smooth}
 #kontak{scroll-margin-top:90px}
+
+/* ===== Halaman Kontak ===== */
+.kt-hero{padding:calc(var(--nav-h) + 3rem) 6vw 2.5rem;background:linear-gradient(180deg,#f3e6e2,#faf6f2)}
+.kt-hero-in{max-width:760px}
+.kt-hero h1{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:clamp(2rem,4.4vw,3.2rem);line-height:1.15;margin:.5rem 0 1rem}
+.kt-hero h1 em{color:var(--maroon);font-style:italic}
+.kt-sub{max-width:560px;color:#4a3b38;line-height:1.7;margin:0}
+.kt-wrap{max-width:1100px;margin:0 auto;padding:1rem 6vw 4rem}
+.kt-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.kt-kartu{display:flex;flex-direction:column;gap:8px;background:#fffaf9;border:1px solid #ecd9d6;border-radius:22px;padding:26px;color:inherit;text-decoration:none;transition:transform .2s,box-shadow .2s}
+.kt-kartu:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(107,39,55,.12)}
+.kt-ikon{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#f3e6e2;color:var(--maroon);margin-bottom:6px}
+.kt-kartu h2{margin:0;font-size:1.3rem;font-family:'Playfair Display',serif}
+.kt-kartu p{margin:0;color:#6f615d;font-size:.93rem;line-height:1.6}
+.kt-kartu strong{color:var(--maroon);margin-top:4px;overflow-wrap:anywhere}
+.kt-aksi{margin-top:auto;padding-top:10px;color:var(--maroon);font-weight:600;font-size:.9rem}
+.kt-cta{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:28px;padding:28px 32px;border-radius:24px;background:linear-gradient(135deg,#8a3447,#6b2737);color:#fff}
+.kt-cta h2{margin:0 0 6px;font-size:1.4rem;color:#fff}
+.kt-cta p{margin:0;color:#f3d6dc}
+.kt-cta-aksi{display:flex;gap:10px;flex-wrap:wrap}
+.kt-cta .btn{background:#fff;color:var(--maroon)}
+.kt-cta .btn.ghost{background:transparent;color:#fff;border:1px solid #fff}
+@media(max-width:800px){
+  .kt-grid{grid-template-columns:minmax(0,1fr)}
+  .kt-wrap{padding:1rem 20px 3rem}
+  .kt-hero{padding-left:20px;padding-right:20px}
+  .kt-cta{padding:22px}
+  .kt-cta-aksi{width:100%}
+  .kt-cta-aksi .btn{flex:1;text-align:center}
+}

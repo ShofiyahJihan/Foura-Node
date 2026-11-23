@@ -163,6 +163,8 @@ router.get('/produk/:id', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+router.get('/kontak', (req, res) => res.render('kontak', { title: 'Kontak' }));
+
 router.get('/syarat-ketentuan', async (req, res, next) => {
   try {
     const bagian = await ambilHalaman('syarat-ketentuan');

@@ -37,44 +37,6 @@
 </section>
 
 
-<!-- ===== LAYANAN PILIHAN ===== -->
-<section class="page" id="layanan">
-  <% if (berandaPaket.length) { %>
-  <div class="bl-bagian">
-    <div class="bl-kepala">
-      <div>
-        <p class="eyebrow">Paket Bundling</p>
-        <h2>Paket hemat untuk kelola media sosial brand kamu</h2>
-      </div>
-      <a class="bl-lihat" href="/katalog">Lihat semua layanan →</a>
-    </div>
-    <div class="kp-grid">
-      <% berandaPaket.forEach(p => { %>
-        <%- include('partials/kartu-produk', { p }) %>
-      <% }) %>
-    </div>
-  </div>
-  <% } %>
-
-  <% if (berandaSatuan.length) { %>
-  <div class="bl-bagian">
-    <div class="bl-kepala">
-      <div>
-        <p class="eyebrow">Jasa Satuan</p>
-        <h2>Layanan paling sering dipilih</h2>
-      </div>
-      <a class="bl-lihat" href="/katalog">Lihat semua layanan →</a>
-    </div>
-    <div class="kp-grid kp-grid-4">
-      <% berandaSatuan.forEach(p => { %>
-        <%- include('partials/kartu-produk', { p }) %>
-      <% }) %>
-    </div>
-  </div>
-  <% } %>
-</section>
-
-
 <!-- ===== KALKULATOR ESTIMASI KEBUTUHAN ===== -->
 <section class="page" id="kalkulator">
   <div class="kalkulator">
@@ -158,6 +120,44 @@
       <% } %>
     </div>
   </div>
+</section>
+
+
+<!-- ===== LAYANAN PILIHAN ===== -->
+<section class="page" id="layanan">
+  <% if (berandaPaket.length) { %>
+  <div class="bl-bagian">
+    <div class="bl-kepala">
+      <div>
+        <p class="eyebrow">Paket Bundling</p>
+        <h2>Paket hemat untuk kelola media sosial brand kamu</h2>
+      </div>
+      <a class="bl-lihat" href="/katalog">Lihat semua layanan →</a>
+    </div>
+    <div class="kp-grid">
+      <% berandaPaket.forEach(p => { %>
+        <%- include('partials/kartu-produk', { p }) %>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
+
+  <% if (berandaSatuan.length) { %>
+  <div class="bl-bagian">
+    <div class="bl-kepala">
+      <div>
+        <p class="eyebrow">Jasa Satuan</p>
+        <h2>Layanan paling sering dipilih</h2>
+      </div>
+      <a class="bl-lihat" href="/katalog">Lihat semua layanan →</a>
+    </div>
+    <div class="kp-grid kp-grid-4">
+      <% berandaSatuan.forEach(p => { %>
+        <%- include('partials/kartu-produk', { p }) %>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
 </section>
 
 <%- include('partials/footer') %>

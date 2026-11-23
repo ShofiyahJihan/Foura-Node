@@ -2181,3 +2181,11 @@ html{scroll-behavior:smooth}
   .kt-cta-aksi{width:100%}
   .kt-cta-aksi .btn{flex:1;text-align:center}
 }
+
+/* Kalkulator di atas, lalu layanan pilihan: beri jarak yang pas */
+#kalkulator{padding-bottom:0}
+#layanan{padding-top:2.5rem}
+
+/* Tombol "Lihat Katalog Layanan" di keranjang kosong (sama dengan tombol di dashboard) */
+.kr-kosong .btn-tambah{display:inline-block;background:#6b2737;color:#fff;border:0;border-radius:8px;padding:10px 18px;font:inherit;font-size:.85rem;text-decoration:none;margin-top:14px}
+.kr-kosong .btn-tambah:hover{background:#561f2d}

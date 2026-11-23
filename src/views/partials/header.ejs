@@ -50,6 +50,7 @@
       <a href="/katalog" class="<%= path.startsWith('/katalog') || path.startsWith('/produk') ? 'active' : '' %>">Katalog Layanan</a>
       <a href="/artikel" class="<%= path.startsWith('/artikel') ? 'active' : '' %>">Artikel</a>
       <a href="/tentang" class="<%= path.startsWith('/tentang') ? 'active' : '' %>">Tentang Kami</a>
+      <a href="#kontak" class="nav-kontak">Kontak</a>
       <% if (!(typeof user !== 'undefined' && user)) { %><a href="/masuk" class="link-masuk">Masuk</a><% } %>
     </nav>
 

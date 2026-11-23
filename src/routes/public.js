@@ -76,6 +76,13 @@ DATA.forEach(k => k.products.forEach(p => {
   };
   URUT_PRODUK.push(norm(p.name));
 }));
+// Jasa satuan yang ditampilkan di beranda (ubah daftar ini kalau mau mengganti rekomendasi)
+const REKOMENDASI_SATUAN = [
+  'Konten Feed Instagram',
+  'Sesi Foto Produk Profesional',
+  'Kelola Instagram',
+  'Laporan Performa Sederhana',
+];
 const URUT_KATEGORI = DATA.map(k => k.name_kategori);
 const idx = (arr, v) => { const i = arr.indexOf(v); return i === -1 ? 999 : i; };
 
@@ -94,7 +101,20 @@ router.get('/', async (req, res, next) => {
       order: [['price', 'ASC']],
     });
     const kalk = hitung(req.query, paket);
-    res.render('beranda', { title: 'Beranda', kategori, produk, kalk });
+
+    // Pilihan layanan di beranda: semua paket bundling + beberapa jasa satuan unggulan
+    const semua = (await Product.findAll({ include: [{ model: CategoryProduct, as: 'category' }] }))
+      .map(x => x.get({ plain: true }));
+    semua.forEach(x => Object.assign(x, META[norm(x.name)] || {}));
+    const berandaPaket = semua
+      .filter(x => x.category && x.category.name_kategori === KATEGORI_PAKET)
+      .sort((a, b) => Number(a.price) - Number(b.price));
+    const berandaSatuan = REKOMENDASI_SATUAN
+      .map(n => semua.find(x => norm(x.name) === norm(n)))
+      .filter(Boolean);
+    const kuota = await statusKuota();
+
+    res.render('beranda', { title: 'Beranda', kategori, produk, kalk, berandaPaket, berandaSatuan, kuota });
   } catch (e) { next(e); }
 });
 

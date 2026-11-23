@@ -2141,3 +2141,17 @@ body{background:#f6efeb;color:#2b2320;font-family:'DM Sans',sans-serif}
   .pd-aksi .pd-btn{display:block;width:100%;text-align:center;box-sizing:border-box;padding-top:14px;padding-bottom:14px}
   .pd-catatan{border:1px solid #ecd9d6;border-radius:14px}
 }
+
+/* ===== Layanan pilihan di beranda ===== */
+#layanan{padding-top:3rem}
+.bl-bagian{margin-bottom:2.4rem}
+.bl-kepala{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+.bl-kepala h2{margin:.2rem 0 0;font-size:clamp(1.4rem,2.6vw,2rem);line-height:1.25}
+.bl-lihat{color:var(--maroon);font-weight:600;text-decoration:none;font-size:.92rem;white-space:nowrap}
+.bl-lihat:hover{text-decoration:underline}
+.kp-grid.kp-grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1100px){.kp-grid.kp-grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Link Kontak (menggulung halus ke footer) */
+html{scroll-behavior:smooth}
+#kontak{scroll-margin-top:90px}

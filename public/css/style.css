@@ -2157,12 +2157,9 @@ html{scroll-behavior:smooth}
 #kontak{scroll-margin-top:90px}
 
 /* ===== Halaman Kontak ===== */
-.kt-hero{padding:calc(var(--nav-h) + 3rem) 6vw 2.5rem;background:linear-gradient(180deg,#f3e6e2,#faf6f2)}
-.kt-hero-in{max-width:760px}
-.kt-hero h1{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:clamp(2rem,4.4vw,3.2rem);line-height:1.15;margin:.5rem 0 1rem}
-.kt-hero h1 em{color:var(--maroon);font-style:italic}
-.kt-sub{max-width:560px;color:#4a3b38;line-height:1.7;margin:0}
-.kt-wrap{max-width:1100px;margin:0 auto;padding:1rem 6vw 4rem}
+/* hero Kontak memakai gaya .ar-hero (sama dengan Artikel & Tentang), hanya lebih pendek */
+.ar-hero.kt-hero{height:auto;min-height:520px}
+.kt-wrap{max-width:1180px;margin:0 auto;padding:3rem 6vw 4rem}
 .kt-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
 .kt-kartu{display:flex;flex-direction:column;gap:8px;background:#fffaf9;border:1px solid #ecd9d6;border-radius:22px;padding:26px;color:inherit;text-decoration:none;transition:transform .2s,box-shadow .2s}
 .kt-kartu:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(107,39,55,.12)}
@@ -2180,7 +2177,6 @@ html{scroll-behavior:smooth}
 @media(max-width:800px){
   .kt-grid{grid-template-columns:minmax(0,1fr)}
   .kt-wrap{padding:1rem 20px 3rem}
-  .kt-hero{padding-left:20px;padding-right:20px}
   .kt-cta{padding:22px}
   .kt-cta-aksi{width:100%}
   .kt-cta-aksi .btn{flex:1;text-align:center}

@@ -3,11 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= locals.title ? title + ' — ' : '' %>Foura Creative</title>
+  <%
+    const judulTab = (locals.title === 'Beranda')
+      ? 'Foura Creative — Jasa Kelola Media Sosial UMKM Fashion Makassar'
+      : ((locals.title ? title + ' — ' : '') + 'Foura Creative');
+  %>
+  <title><%= judulTab %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png">
+  <link rel="apple-touch-icon" href="/images/logo.png">
 
   <%
     const og = locals.og || {};
-    const ogJudul = og.judul || ((locals.title ? title + ' — ' : '') + 'Foura Creative');
+    const ogJudul = og.judul || judulTab;
     const ogDeskripsi = og.deskripsi || 'Jasa pengelolaan media sosial untuk UMKM fashion di Makassar. Konten, jadwal posting, sampai laporan performa bulanan.';
   %>
   <meta name="description" content="<%= ogDeskripsi %>">
